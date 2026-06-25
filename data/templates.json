@@ -1,0 +1,207 @@
+[
+  {
+    "name": "No Excuses",
+    "category": "tshirt",
+    "file": "./assets/tshirt_templates/no_excuse.webp"
+  },
+  {
+    "name": "Good Vibes",
+    "category": "tshirt",
+    "file": "./assets/tshirt_templates/good_vibes.webp"
+  },
+  {
+    "name": "Mountain Moon",
+    "category": "tshirt",
+    "file": "./assets/tshirt_templates/mountain_moon.webp"
+  },
+  {
+    "name": "Colorful Boxes",
+    "category": "tshirt",
+    "file": "./assets/tshirt_templates/colorful_boxes.webp"
+  },
+  {
+    "name": "Wolf",
+    "category": "tshirt",
+    "file": "./assets/tshirt_templates/wolf.webp"
+  },
+  {
+    "name": "Tiger",
+    "category": "tshirt",
+    "file": "./assets/tshirt_templates/tiger.webp"
+  },
+  {
+    "name": "Sunset Adventure",
+    "category": "tshirt",
+    "file": "./assets/tshirt_templates/sunset_adventure.webp"
+  },
+  {
+    "name": "Stay Wild",
+    "category": "tshirt",
+    "file": "./assets/tshirt_templates/stay_wild.webp"
+  },
+  {
+    "name": "Coconut",
+    "category": "tshirt",
+    "file": "./assets/tshirt_templates/coconut.webp"
+  },
+  {
+    "name": "Guy On Moon",
+    "category": "tshirt",
+    "file": "./assets/tshirt_templates/guy_on_moon.webp"
+  },
+  {
+    "name": "Sun River Mountain",
+    "category": "tshirt",
+    "file": "./assets/tshirt_templates/sun_river_mountain.webp"
+  },
+  {
+    "name": "Chillin Penguin",
+    "category": "tshirt",
+    "file": "./assets/tshirt_templates/chillin_penguin.webp"
+  },
+  {
+    "name": "Butterfly",
+    "category": "diary",
+    "file": "./assets/diary_templates/butterfly.webp"
+  },
+  {
+    "name": "Cloud Moon",
+    "category": "diary",
+    "file": "./assets/diary_templates/cloud_moon.webp"
+  },
+  {
+    "name": "Cup Over Books",
+    "category": "diary",
+    "file": "./assets/diary_templates/cup_over_books.webp"
+  },
+  {
+    "name": "Dream Catcher",
+    "category": "diary",
+    "file": "./assets/diary_templates/dream_catcher.webp"
+  },
+  {
+    "name": "Feather",
+    "category": "diary",
+    "file": "./assets/diary_templates/feather.webp"
+  },
+  {
+    "name": "Flower",
+    "category": "diary",
+    "file": "./assets/diary_templates/flower.webp"
+  },
+  {
+    "name": "Golden Moon",
+    "category": "diary",
+    "file": "./assets/diary_templates/golden_moon.webp"
+  },
+  {
+    "name": "Heart Leaves",
+    "category": "diary",
+    "file": "./assets/diary_templates/heart_leaves.webp"
+  },
+  {
+    "name": "Leaves",
+    "category": "diary",
+    "file": "./assets/diary_templates/leaves.webp"
+  },
+  {
+    "name": "Mountain Timer",
+    "category": "diary",
+    "file": "./assets/diary_templates/mountain_timer.webp"
+  },
+  {
+    "name": "Teddy",
+    "category": "diary",
+    "file": "./assets/diary_templates/teddy.webp"
+  },
+  {
+    "name": "Best Husband",
+    "category": "cup",
+    "file": "./assets/cup_templates/best_husband.webp"
+  },
+  {
+    "name": "Best Sister",
+    "category": "cup",
+    "file": "./assets/cup_templates/best_sister.webp"
+  },
+  {
+    "name": "Coffee First",
+    "category": "cup",
+    "file": "./assets/cup_templates/coffee_first.webp"
+  },
+  {
+    "name": "Explore More",
+    "category": "cup",
+    "file": "./assets/cup_templates/explore_more.webp"
+  },
+  {
+    "name": "For Brother",
+    "category": "cup",
+    "file": "./assets/cup_templates/for_brother.webp"
+  },
+  {
+    "name": "His Hers",
+    "category": "cup",
+    "file": "./assets/cup_templates/his_hers.webp"
+  },
+  {
+    "name": "Hot Coffee",
+    "category": "cup",
+    "file": "./assets/cup_templates/hot_coffee.webp"
+  },
+  {
+    "name": "Kitty",
+    "category": "cup",
+    "file": "./assets/cup_templates/kitty.webp"
+  },
+  {
+    "name": "Love Message",
+    "category": "cup",
+    "file": "./assets/cup_templates/love_msg.webp"
+  },
+  {
+    "name": "Nature",
+    "category": "cup",
+    "file": "./assets/cup_templates/nature.webp"
+  },
+  {
+    "name": "Perfect Message",
+    "category": "cup",
+    "file": "./assets/cup_templates/perfect_msg.webp"
+  },
+  {
+    "name": "Bottle Line",
+    "category": "bottle",
+    "file": "./assets/bottle_templates/bottle_line.webp"
+  },
+  {
+    "name": "Cat Line",
+    "category": "bottle",
+    "file": "./assets/bottle_templates/cat_line.webp"
+  },
+  {
+    "name": "Cute Panda",
+    "category": "bottle",
+    "file": "./assets/bottle_templates/cute_panda.webp"
+  },
+  {
+    "name": "Girl Line",
+    "category": "bottle",
+    "file": "./assets/bottle_templates/girl_line.webp"
+  },
+  {
+    "name": "Hello Kitty",
+    "category": "bottle",
+    "file": "./assets/bottle_templates/hello_kitty.webp"
+  },
+  {
+    "name": "Tree Lines",
+    "category": "bottle",
+    "file": "./assets/bottle_templates/tree_lines.webp"
+  },
+  {
+    "name": "You Are Star",
+    "category": "bottle",
+    "file": "./assets/bottle_templates/you_are_star.webp"
+  }
+]

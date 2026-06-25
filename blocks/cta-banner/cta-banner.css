@@ -1,0 +1,48 @@
+/* ============================================================
+   CTA Banner Block — Craftora EDS
+   ============================================================ */
+
+.cta-banner-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--space-6);
+  background-color: var(--color-secondary-subtle);
+  padding: var(--space-20) var(--space-8);
+  border-radius: var(--radius-2xl);
+}
+
+.cta-banner-content h2 {
+  font-family: var(--font-display);
+  font-weight: var(--weight-normal);
+  font-size: var(--text-3xl);
+  margin: 0;
+  max-width: 16ch;
+}
+
+.cta-banner-content p {
+  max-width: 44ch;
+  margin: 0;
+}
+
+.cta-banner-btn {
+  display: inline-block;
+  padding: var(--space-4) var(--space-10);
+  border-radius: var(--radius-sm);
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  font-family: var(--font-heading);
+  text-decoration: none;
+  transition: all var(--transition-smooth);
+}
+
+.cta-banner-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-accent);
+  color: var(--color-text-on-accent);
+  text-decoration: none;
+}
