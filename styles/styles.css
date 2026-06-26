@@ -481,7 +481,8 @@ main > div {
 }
 
 main > .section {
-  margin: var(--space-12) 0;
+  margin: 0;
+  padding: var(--space-20) 0;
 }
 
 main > .section > div {
@@ -491,7 +492,7 @@ main > .section > div {
 }
 
 main > .section:first-of-type {
-  margin-top: 0;
+  padding-top: 0;
 }
 
 @media (width >= 900px) {
@@ -504,14 +505,11 @@ main > .section:first-of-type {
 main .section.light,
 main .section.highlight {
   background-color: var(--color-background);
-  margin: 0;
-  padding: var(--space-12) 0;
 }
 
 main .section.dark {
   background-color: var(--color-primary);
   color: var(--color-text-on-dark);
-  margin: 0;
   padding: var(--space-16) 0;
 }
 
@@ -527,14 +525,11 @@ main .section.dark p {
 
 main .section.accent-bg {
   background-color: var(--color-secondary-subtle);
-  margin: 0;
   padding: var(--space-16) 0;
 }
 
 main .section.warm {
   background-color: var(--color-surface-warm);
-  margin: 0;
-  padding: var(--space-12) 0;
 }
 
 /* ============================================================

@@ -1,0 +1,61 @@
+/* ============================================================
+   Hero Pages Block — Craftora EDS
+   Inner-page hero with blue tinted background.
+   Matches legacy .hero-content from style.css
+   ============================================================ */
+
+.hero-pages-container {
+  background-color: var(--color-secondary-subtle);
+  background-image: url('/assets/backgrounds/bg.svg');
+  background-size: contain;
+  background-position: bottom right;
+  background-repeat: no-repeat;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.hero-pages-wrapper {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 0 var(--content-padding);
+}
+
+.hero-pages-content {
+  padding: var(--space-20) 0;
+}
+
+.hero-pages h1,
+.hero-pages h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-normal);
+  line-height: var(--leading-tight);
+  color: var(--color-text);
+  margin-bottom: var(--space-4);
+  letter-spacing: -0.01em;
+}
+
+.hero-pages p {
+  max-width: 48ch;
+  color: var(--color-text-body);
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  line-height: var(--leading-relaxed);
+  margin: 0;
+}
+
+@media (width < 768px) {
+  .hero-pages-content {
+    padding: var(--space-12) 0;
+  }
+
+  .hero-pages h1,
+  .hero-pages h2 {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-3);
+  }
+
+  .hero-pages p {
+    font-size: var(--text-base);
+  }
+}
