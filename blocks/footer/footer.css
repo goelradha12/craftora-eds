@@ -1,20 +1,176 @@
-footer {
-  background-color: var(--light-color);
-  font-size: var(--body-font-size-xs);
+/* ============================================================
+   Footer — Craftora EDS
+   Matches legacy craftora/styles/style.css footer section
+   ============================================================ */
+
+footer .footer {
+  background: var(--color-primary);
+  color: var(--color-text-on-dark);
+  padding: var(--space-20) var(--space-8);
 }
 
-footer .footer > div {
-  margin: auto;
-  max-width: 1200px;
-  padding: 40px 24px 24px;
+/* ── Top grid ── */
+footer .footer-top {
+  display: grid;
+  grid-template-columns: 1.8fr repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--space-10);
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding-bottom: var(--space-12);
+  border-bottom: 1px solid rgb(249 250 248 / 0.1);
 }
 
-footer .footer p {
+/* ── Brand column ── */
+footer .footer-brand img {
+  height: 26px;
+  width: auto;
+  margin-bottom: var(--space-5);
+  display: block;
+}
+
+/* Handle image in paragraph (EDS wraps img in <p>) */
+footer .footer-brand p:first-child {
+  margin-bottom: var(--space-5);
+}
+
+footer .footer-brand p:first-child img {
+  height: 26px;
+  width: auto;
+  display: block;
+}
+
+/* If image isn't loaded yet or missing, hide broken element */
+footer .footer-brand p:first-child:empty {
+  display: none;
+}
+
+footer .footer-brand p {
+  color: rgb(249 250 248 / 0.7);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  max-width: 280px;
+  margin: 0 0 var(--space-4);
+}
+
+footer .footer-brand address,
+footer .footer-brand address p {
+  font-style: normal;
+  color: rgb(249 250 248 / 0.5);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
   margin: 0;
 }
 
-@media (width >= 900px) {
-  footer .footer > div {
-    padding: 40px 32px 24px;
+footer .footer-brand ul {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-6) 0 0;
+  display: flex;
+  gap: var(--space-4);
+}
+
+footer .footer-brand a {
+  color: rgb(249 250 248 / 0.6);
+  transition: color var(--transition-base);
+  display: inline-flex;
+}
+
+footer .footer-brand a:hover {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+/* ── Link columns ── */
+footer .footer-links h3,
+footer .footer-links h4 {
+  font-family: var(--font-heading);
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-sm);
+  color: var(--color-text-on-dark);
+  letter-spacing: 0.03em;
+  margin: 0 0 var(--space-3);
+}
+
+footer .footer-links ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+footer .footer-links li {
+  color: rgb(249 250 248 / 0.6);
+  font-size: var(--text-sm);
+}
+
+footer .footer-links a {
+  color: rgb(249 250 248 / 0.6);
+  font-size: var(--text-sm);
+  text-decoration: none;
+  transition: color var(--transition-base);
+}
+
+footer .footer-links a:hover {
+  color: var(--color-text-on-dark);
+  text-decoration: none;
+}
+
+/* ── Bottom bar ── */
+footer .footer-bottom {
+  max-width: var(--content-width);
+  margin: var(--space-8) auto 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+footer .footer-bottom p {
+  color: rgb(249 250 248 / 0.4);
+  font-size: var(--text-xs);
+  margin: 0;
+}
+
+footer .footer-bottom a {
+  color: rgb(249 250 248 / 0.6);
+  font-size: var(--text-sm);
+  text-decoration: none;
+  transition: color var(--transition-base);
+}
+
+footer .footer-bottom a:hover {
+  color: var(--color-text-on-dark);
+  text-decoration: none;
+}
+
+/* ── Responsive ── */
+@media (width < 900px) {
+  footer .footer {
+    padding: var(--space-12) var(--space-6);
+  }
+
+  footer .footer-top {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-8);
+  }
+
+  footer .footer-brand {
+    grid-column: 1 / -1;
+  }
+
+  footer .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+}
+
+@media (width < 600px) {
+  footer .footer-top {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
   }
 }
