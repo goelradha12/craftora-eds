@@ -1,3 +1,25 @@
+/**
+ * Extracts a search query from a Google Maps URL.
+ * Handles formats like:
+ *   - https://maps.google.com/?q=address+text
+ *   - https://www.google.com/maps/place/address
+ */
+function extractMapQuery(url) {
+  try {
+    const u = new URL(url);
+    // ?q= parameter
+    const q = u.searchParams.get('q');
+    if (q) return q;
+    // /maps/place/... format
+    const placeMatch = u.pathname.match(/\/place\/([^/]+)/);
+    if (placeMatch) return decodeURIComponent(placeMatch[1].replace(/\+/g, ' '));
+    // Fallback: use full URL
+    return url;
+  } catch {
+    return url;
+  }
+}
+
 export default function decorate(block) {
   const cols = [...block.firstElementChild.children];
   block.classList.add(`columns-${cols.length}-cols`);
@@ -43,26 +65,4 @@ export default function decorate(block) {
       }
     });
   });
-}
-
-/**
- * Extracts a search query from a Google Maps URL.
- * Handles formats like:
- *   - https://maps.google.com/?q=address+text
- *   - https://www.google.com/maps/place/address
- */
-function extractMapQuery(url) {
-  try {
-    const u = new URL(url);
-    // ?q= parameter
-    const q = u.searchParams.get('q');
-    if (q) return q;
-    // /maps/place/... format
-    const placeMatch = u.pathname.match(/\/place\/([^/]+)/);
-    if (placeMatch) return decodeURIComponent(placeMatch[1].replace(/\+/g, ' '));
-    // Fallback: use full URL
-    return url;
-  } catch {
-    return url;
-  }
 }

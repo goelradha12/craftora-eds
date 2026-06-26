@@ -1,20 +1,179 @@
-footer {
-  background-color: var(--light-color);
-  font-size: var(--body-font-size-xs);
+/* ============================================================
+   footer.css — Craftora EDS Footer Block
+   ============================================================ */
+
+/* ── Full-width background wrapper ── */
+.footer-wrapper {
+    background: var(--color-primary);
+    color: var(--text-on-dark);
+    padding: var(--space-20) 0;
 }
 
-footer .footer > div {
-  margin: auto;
-  max-width: 1200px;
-  padding: 40px 24px 24px;
+/* ── Top Section (Grid) ── */
+.footer.block .footer-top {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: var(--space-10);
+    padding-bottom: var(--space-12);
+    border-bottom: 1px solid hsl(from var(--bg) h s l / 0.1);
 }
 
-footer .footer p {
-  margin: 0;
+/* ── Brand Column ── */
+.footer.block .footer-brand {
+    min-width: 0;
 }
 
-@media (width >= 900px) {
-  footer .footer > div {
-    padding: 40px 32px 24px;
-  }
+.footer.block .footer-logo {
+    display: block;
+    margin-bottom: var(--space-5);
+    width: fit-content;
+}
+
+.footer.block .footer-logo img {
+    height: 26px;
+    width: auto;
+    display: block;
+}
+
+.footer.block .footer-tagline {
+    color: hsl(from var(--bg) h s l / 0.7);
+    line-height: var(--leading-relaxed);
+    max-width: 280px;
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-5);
+}
+
+.footer.block .footer-address {
+    font-style: normal;
+    color: hsl(from var(--bg) h s l / 0.5);
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
+}
+
+.footer.block .footer-address p {
+    opacity: 1;
+    margin: 0;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+}
+
+/* ── Social Icons ── */
+.footer.block .footer-socials {
+    display: flex;
+    gap: var(--space-4);
+    margin-top: var(--space-6);
+}
+
+.footer.block .footer-socials a {
+    color: hsl(from var(--bg) h s l / 0.6);
+    transition: color var(--transition-base), transform var(--transition-base);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.footer.block .footer-socials a:hover,
+.footer.block .footer-socials a:focus-visible {
+    color: var(--color-accent);
+    transform: translateY(-2px);
+}
+
+/* ── Links Columns ── */
+.footer.block .footer-links {
+    min-width: 0;
+}
+
+.footer.block .footer-links h3 {
+    font-family: var(--font-heading);
+    font-weight: var(--weight-semibold);
+    margin-bottom: var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--text-on-dark);
+    letter-spacing: 0.03em;
+}
+
+.footer.block .footer-links ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin: 0;
+}
+
+.footer.block .footer-links li {
+    margin: 0;
+}
+
+.footer.block .footer-links a,
+.footer.block .footer-bottom-links a {
+    color: hsl(from var(--bg) h s l / 0.6);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    transition: color var(--transition-base);
+}
+
+.footer.block .footer-links a:hover,
+.footer.block .footer-bottom-links a:hover {
+    color: var(--text-on-dark);
+}
+
+/* ── Bottom Section (Copyright & Legal) ── */
+.footer.block .footer-bottom {
+    margin-top: var(--space-10);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+}
+
+.footer.block .footer-bottom p {
+    color: hsl(from var(--bg) h s l / 0.4);
+    font-size: var(--text-xs);
+    margin: 0;
+}
+
+.footer.block .footer-bottom-links {
+    display: flex;
+    gap: var(--space-6);
+    flex-wrap: wrap;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE (Mobile layout)
+══════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+    .footer-wrapper {
+        padding: var(--space-12) 0;
+    }
+
+    /* Convert 4 columns to 2 columns on tablet/mobile */
+    .footer.block .footer-top {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-8);
+    }
+
+    /* Make the brand column span full width on mobile */
+    .footer.block .footer-brand {
+        grid-column: 1 / -1;
+    }
+
+    .footer.block .footer-links ul {
+        gap: var(--space-2);
+    }
+
+    /* Stack bottom copyright and links vertically */
+    .footer.block .footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-3);
+    }
+
+    .footer.block .footer-bottom-links {
+        gap: var(--space-4);
+    }
 }
