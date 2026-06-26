@@ -1,19 +1,43 @@
+/* ============================================================
+   Cards Block — Craftora EDS
+   Default: image cards. Variant "icon-content": value proposition cards.
+   ============================================================ */
+
+/* Section heading above cards (default-content-wrapper in same section) */
+.cards-container .default-content-wrapper {
+  text-align: center;
+  margin-bottom: var(--space-10);
+}
+
+.cards-container .default-content-wrapper h2 {
+  font-family: var(--font-display);
+  font-weight: var(--weight-normal);
+}
+
+.cards-container .default-content-wrapper p {
+  color: var(--color-text-muted);
+  max-width: 44ch;
+  margin: var(--space-2) auto 0;
+}
+
 .cards > ul {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(257px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-6);
 }
 
 .cards > ul > li {
-  border: 1px solid #dadada;
-  background-color: var(--background-color);
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  transition: transform var(--transition-smooth);
 }
 
-.cards .cards-card-body {
-  margin: 16px;
+.cards > ul > li:hover {
+  transform: translateY(-2px);
 }
 
 .cards .cards-card-image {
@@ -24,4 +48,98 @@
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
+}
+
+.cards .cards-card-body {
+  padding: var(--space-4);
+}
+
+.cards .cards-card-body h3 {
+  font-family: var(--font-heading);
+  font-size: var(--text-base);
+  font-weight: var(--weight-bold);
+  margin: 0 0 var(--space-2);
+  color: var(--color-text);
+}
+
+.cards .cards-card-body p {
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+/* ── Icon-Content Variant ──
+   Used for "What we stand for" values grid.
+   Each li has 3 cells: icon | title | description
+*/
+.cards.icon-content > ul > li {
+  padding: var(--space-8) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.cards.icon-content > ul > li > .cards-card-body:first-child {
+  /* Icon cell */
+  width: 48px;
+  height: 48px;
+  background: var(--color-accent-subtle);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-5);
+  padding: 0;
+  color: var(--color-accent);
+  overflow: hidden;
+}
+
+.cards.icon-content > ul > li > .cards-card-body:first-child p {
+  /* Hide escaped SVG text — show accent dot as placeholder */
+  font-size: 0;
+  line-height: 0;
+  width: 24px;
+  height: 24px;
+  overflow: hidden;
+  margin: 0;
+}
+
+/* When real icons are used via :icon-name: */
+.cards.icon-content > ul > li > .cards-card-body:first-child .icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* When actual SVG is rendered (not escaped) */
+.cards.icon-content > ul > li > .cards-card-body:first-child svg {
+  width: 24px;
+  height: 24px;
+  color: var(--color-accent);
+}
+
+.cards.icon-content > ul > li > .cards-card-body:nth-child(2) {
+  /* Title cell */
+  padding: 0;
+  margin-bottom: var(--space-2);
+}
+
+.cards.icon-content > ul > li > .cards-card-body:nth-child(2) h3 {
+  font-family: var(--font-heading);
+  font-size: var(--text-base);
+  font-weight: var(--weight-bold);
+  color: var(--color-text);
+  margin: 0;
+}
+
+.cards.icon-content > ul > li > .cards-card-body:nth-child(3) {
+  /* Description cell */
+  padding: 0;
+}
+
+.cards.icon-content > ul > li > .cards-card-body:nth-child(3) p {
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-muted);
+  margin: 0;
 }

@@ -297,7 +297,8 @@ main img {
 
 /* sections */
 main > .section {
-  margin: 40px 0;
+  margin: 0;
+  padding: var(--space-20) 0;
 }
 
 main > .section > div {
@@ -307,7 +308,7 @@ main > .section > div {
 }
 
 main > .section:first-of-type {
-  margin-top: 0;
+  padding-top: 0;
 }
 
 @media (width >= 900px) {
@@ -319,7 +320,49 @@ main > .section:first-of-type {
 /* section metadata */
 main .section.light,
 main .section.highlight {
-  background-color: var(--light-color);
-  margin: 0;
-  padding: 40px 0;
+  background-color: var(--color-background);
+}
+
+main .section.dark {
+  background-color: var(--color-primary);
+  color: var(--color-text-on-dark);
+  padding: var(--space-16) 0;
+}
+
+main .section.dark h2,
+main .section.dark h3,
+main .section.dark h4 {
+  color: var(--color-text-on-dark);
+}
+
+main .section.dark p {
+  color: rgb(249 250 248 / 0.7);
+}
+
+main .section.accent-bg {
+  background-color: var(--color-secondary-subtle);
+  padding: var(--space-16) 0;
+}
+
+main .section.warm {
+  background-color: var(--color-surface-warm);
+}
+
+/* ============================================================
+   ACCESSIBILITY
+   ============================================================ */
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
