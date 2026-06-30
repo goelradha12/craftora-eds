@@ -22,19 +22,16 @@ export default function decorate(block) {
   block.textContent = '';
 
   const wrapper = document.createElement('div');
-  wrapper.className = 'hero-wrapper';
+  wrapper.className = 'hero-inner';
 
   // Text content
   const content = document.createElement('div');
   content.className = 'hero-content';
 
   // Move all rows' first-column content into text area
-  rows.forEach((row, i) => {
+  rows.forEach((row) => {
     const firstCol = row.children[0];
-    if (i === 0 && firstCol) {
-      // Heading — style em/strong as highlight
-      while (firstCol.firstChild) content.append(firstCol.firstChild);
-    } else if (firstCol) {
+    if (firstCol) {
       while (firstCol.firstChild) content.append(firstCol.firstChild);
     }
   });
@@ -67,4 +64,9 @@ export default function decorate(block) {
   }
 
   block.append(wrapper);
+
+  const section = block.closest('.section');
+  if (section) {
+    section.classList.remove('section');
+  }
 }
