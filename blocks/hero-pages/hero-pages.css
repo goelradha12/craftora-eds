@@ -14,6 +14,24 @@
   margin: 0;
 }
 
+/* CTA variant: section has no blue bg — the card itself is blue */
+.hero-pages-container:has(.hero-pages.cta) {
+  background-color: transparent;
+  background-image: none;
+  padding: var(--space-20) 0 !important;
+}
+
+.hero-pages-container:has(.hero-pages.cta) .hero-pages-wrapper {
+  max-width: var(--content-width);
+  padding: 0 var(--content-padding);
+}
+
+@media (min-width: 900px) {
+  .hero-pages-container:has(.hero-pages.cta) .hero-pages-wrapper {
+    padding: 0 32px;
+  }
+}
+
 .hero-pages-wrapper {
   max-width: var(--content-width);
   margin: 0 auto;
@@ -58,4 +76,58 @@
   .hero-pages p {
     font-size: var(--text-base);
   }
+}
+
+/* ── CTA Variant ──
+   Centered call-to-action card with blue background + accent button.
+   Matches legacy .cta-section from home.css
+*/
+.hero-pages.cta .hero-pages-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-6);
+  background-color: var(--color-secondary-subtle);
+  background-image: url('/assets/backgrounds/bg.svg');
+  background-size: 40%;
+  background-position: bottom right;
+  background-repeat: no-repeat;
+  padding: var(--space-20) var(--space-8);
+  border-radius: var(--radius-2xl);
+}
+
+.hero-pages.cta h2 {
+  font-family: var(--font-display);
+  font-weight: var(--weight-normal);
+  font-size: var(--text-3xl);
+  margin: 0;
+  max-width: 16ch;
+}
+
+.hero-pages.cta p {
+  max-width: 44ch;
+  margin: 0;
+  text-align: center;
+}
+
+.hero-pages.cta a {
+  display: inline-block;
+  width: fit-content;
+  padding: var(--space-4) var(--space-10);
+  border-radius: var(--radius-sm);
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  font-family: var(--font-heading);
+  text-decoration: none;
+  transition: all var(--transition-smooth);
+}
+
+.hero-pages.cta a:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-accent);
+  color: var(--color-text-on-accent);
+  text-decoration: none;
 }

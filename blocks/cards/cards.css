@@ -36,7 +36,8 @@
   transition: transform var(--transition-smooth);
 }
 
-.cards > ul > li:hover {
+/* Default hover — only on base cards and image-content category cards */
+.cards:not(.icon-content):not(.round) > ul > li:not(:first-child):hover {
   transform: translateY(-2px);
 }
 
@@ -71,16 +72,54 @@
 
 /* ── Icon-Content Variant ──
    Used for "What we stand for" values grid.
-   Each li has 3 cells: icon | title | description
+   First li = heading row (same pattern as image-content).
+   Subsequent lis have 3 cells: icon | title | description
 */
-.cards.icon-content > ul > li {
+
+/* Heading row — same pattern as other variants */
+.cards.icon-content > ul > li:first-child {
+  grid-column: 1 / -1;
+  background: none;
+  border-radius: 0;
+  overflow: visible;
+  text-align: center;
+  padding: 0;
+  margin-bottom: var(--space-4);
+}
+
+.cards.icon-content > ul > li:first-child > .cards-card-body:first-child {
+  /* Hide the "Heading" label cell */
+  display: none;
+}
+
+.cards.icon-content > ul > li:first-child > .cards-card-body:last-child {
+  padding: 0;
+}
+
+.cards.icon-content > ul > li:first-child h2 {
+  font-family: var(--font-display);
+  font-weight: var(--weight-normal);
+  font-size: var(--text-2xl);
+  margin: 0 0 var(--space-2);
+  text-align: center;
+}
+
+.cards.icon-content > ul > li:first-child p {
+  color: var(--color-text-muted);
+  font-size: var(--text-md);
+  max-width: 44ch;
+  margin: var(--space-2) auto 0;
+}
+
+/* Value cards */
+.cards.icon-content > ul > li:not(:first-child) {
   padding: var(--space-8) var(--space-6);
   display: flex;
   flex-direction: column;
   gap: 0;
 }
 
-.cards.icon-content > ul > li > .cards-card-body:first-child {
+.cards.icon-content > ul > li:not(:first-child) > .cards-card-body:first-child {
   /* Icon cell */
   width: 48px;
   height: 48px;
@@ -95,36 +134,41 @@
   overflow: hidden;
 }
 
-.cards.icon-content > ul > li > .cards-card-body:first-child p {
-  /* Hide escaped SVG text — show accent dot as placeholder */
-  font-size: 0;
-  line-height: 0;
-  width: 24px;
-  height: 24px;
-  overflow: hidden;
+.cards.icon-content > ul > li:not(:first-child) > .cards-card-body:first-child p {
   margin: 0;
+  line-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* When real icons are used via :icon-name: */
-.cards.icon-content > ul > li > .cards-card-body:first-child .icon {
+/* Icon via :icon-name: (EDS decorateIcons) */
+.cards.icon-content > ul > li:not(:first-child) > .cards-card-body:first-child .icon {
   width: 24px;
   height: 24px;
 }
 
-/* When actual SVG is rendered (not escaped) */
-.cards.icon-content > ul > li > .cards-card-body:first-child svg {
+.cards.icon-content > ul > li:not(:first-child) > .cards-card-body:first-child .icon img {
+  width: 24px;
+  height: 24px;
+  aspect-ratio: auto;
+  filter: brightness(0) saturate(100%) invert(37%) sepia(93%) saturate(1700%) hue-rotate(11deg) brightness(98%) contrast(103%);
+}
+
+/* Inline SVG fallback */
+.cards.icon-content > ul > li:not(:first-child) > .cards-card-body:first-child svg {
   width: 24px;
   height: 24px;
   color: var(--color-accent);
 }
 
-.cards.icon-content > ul > li > .cards-card-body:nth-child(2) {
+.cards.icon-content > ul > li:not(:first-child) > .cards-card-body:nth-child(2) {
   /* Title cell */
   padding: 0;
   margin-bottom: var(--space-2);
 }
 
-.cards.icon-content > ul > li > .cards-card-body:nth-child(2) h3 {
+.cards.icon-content > ul > li:not(:first-child) > .cards-card-body:nth-child(2) h3 {
   font-family: var(--font-heading);
   font-size: var(--text-base);
   font-weight: var(--weight-bold);
@@ -132,14 +176,161 @@
   margin: 0;
 }
 
-.cards.icon-content > ul > li > .cards-card-body:nth-child(3) {
+.cards.icon-content > ul > li:not(:first-child) > .cards-card-body:nth-child(3) {
   /* Description cell */
   padding: 0;
 }
 
-.cards.icon-content > ul > li > .cards-card-body:nth-child(3) p {
+.cards.icon-content > ul > li:not(:first-child) > .cards-card-body:nth-child(3) p {
   font-size: var(--text-sm);
   line-height: var(--leading-relaxed);
   color: var(--color-text-muted);
   margin: 0;
+}
+
+/* ── Image-Content Variant ──
+   Used for category grid on homepage.
+   First li = section heading (hidden from grid, displayed as title).
+   Subsequent lis = image + linked category name.
+*/
+.cards.image-content > ul {
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+
+/* First li is the heading — span full width, no card styling */
+.cards.image-content > ul > li:first-child {
+  grid-column: 1 / -1;
+  background: none;
+  border-radius: 0;
+  overflow: visible;
+  text-align: center;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.cards.image-content > ul > li:first-child:hover {
+  transform: none;
+}
+.cards.image-content > ul > li:first-child .cards-card-body:first-child {
+  /* Hide the "Heading" label cell */
+  display: none;
+}
+
+.cards.image-content > ul > li:first-child .cards-card-body h2 {
+  font-family: var(--font-display);
+  font-weight: var(--weight-normal);
+  font-size: var(--text-2xl);
+  margin: 0 0 var(--space-2);
+  text-align: center;
+}
+
+/* Category cards — image + title */
+.cards.image-content > ul > li:not(:first-child) {
+  cursor: pointer;
+}
+
+.cards.image-content > ul > li:not(:first-child) .cards-card-image {
+  overflow: hidden;
+}
+
+.cards.image-content > ul > li:not(:first-child) img {
+  height: 240px;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.cards.image-content > ul > li:not(:first-child):hover img {
+  transform: scale(1.05);
+}
+
+.cards.image-content > ul > li:not(:first-child) .cards-card-body {
+  text-align: center;
+  padding: var(--space-5) var(--space-4);
+}
+
+.cards.image-content > ul > li:not(:first-child) .cards-card-body p {
+  margin: 0;
+}
+
+.cards.image-content > ul > li:not(:first-child) .cards-card-body a {
+  font-family: var(--font-display);
+  font-weight: var(--weight-normal);
+  font-size: var(--text-lg);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.cards.image-content > ul > li:not(:first-child) .cards-card-body a:hover {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+/* ── Image-Content Round Variant ──
+   Used for "How It Works" process steps.
+   Circular images, 4-col grid, centered heading + subtitle.
+   Matches legacy .process-grid from home.css
+*/
+.cards.image-content.round > ul {
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-10);
+  text-align: center;
+}
+
+/* Heading li — subtitle included */
+.cards.image-content.round > ul > li:first-child {
+  margin-bottom: var(--space-6);
+}
+
+.cards.image-content.round > ul > li:first-child .cards-card-body:last-child p {
+  color: var(--color-text-muted);
+  font-size: var(--text-md);
+  max-width: 44ch;
+  margin: var(--space-2) auto 0;
+}
+
+/* Step cards — circular image + title */
+.cards.image-content.round > ul > li:not(:first-child) {
+  background: none;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0;
+}
+
+.cards.image-content.round > ul > li:not(:first-child) .cards-card-image {
+  width: 100%;
+  max-width: 140px;
+  aspect-ratio: 1;
+  border-radius: var(--radius-full);
+  border: 3px solid var(--color-border);
+  overflow: hidden;
+}
+
+.cards.image-content.round > ul > li:not(:first-child) img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--radius-full);
+}
+
+.cards.image-content.round > ul > li:not(:first-child) .cards-card-body {
+  padding: 0;
+  text-align: center;
+}
+
+.cards.image-content.round > ul > li:not(:first-child) .cards-card-body p {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  color: var(--color-text);
+  margin: 0;
+}
+
+@media (width < 768px) {
+  .cards.image-content.round > ul {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-6);
+  }
 }

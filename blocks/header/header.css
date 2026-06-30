@@ -30,7 +30,11 @@ header .nav--desktop {
 }
 
 @media (width >= 900px) {
-  header .nav--desktop { display: flex; }
+  header .nav--desktop {
+    display: flex;
+    padding: 0 32px;
+  }
+
   header .nav__phone { display: none; }
 }
 

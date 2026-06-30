@@ -1,0 +1,265 @@
+/* ============================================================
+   Carousel Block — Craftora EDS
+   Horizontal scroll-snap carousel for products and reviews.
+   ============================================================ */
+
+/* ── Header (heading + nav) ── */
+.carousel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-8);
+}
+
+.carousel-heading h2 {
+  font-family: var(--font-display);
+  font-weight: var(--weight-normal);
+  font-size: var(--text-2xl);
+  margin: 0;
+}
+
+.carousel-nav {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.carousel-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-base);
+  padding: 0;
+}
+
+.carousel-btn:hover:not(:disabled) {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-text-on-dark);
+}
+
+.carousel-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.carousel-btn .icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* ── Track (scrollable) ── */
+.carousel-track {
+  display: flex;
+  gap: var(--space-6);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding-bottom: var(--space-4);
+
+  /* Hide scrollbar */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Card (shared base) ── */
+.carousel-card {
+  flex: 0 0 clamp(260px, 31%, 340px);
+  min-width: 0;
+  scroll-snap-align: start;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  transition: transform var(--transition-smooth);
+}
+
+/* Section backgrounds — both variants use blue tint */
+.carousel-container {
+  background-color: var(--color-secondary-subtle);
+}
+
+/* ── Empty state ── */
+.carousel-empty {
+  text-align: center;
+  padding: var(--space-8);
+  color: var(--color-text-muted);
+  font-size: var(--text-md);
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  border: 1px dashed var(--color-border);
+  width: 100%;
+}
+
+/* ══════════════════════════════════════════════════════════
+   PRODUCTS VARIANT
+   ══════════════════════════════════════════════════════════ */
+
+.carousel.products .carousel-card-product {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  text-decoration: none;
+  color: inherit;
+  transition: transform var(--transition-smooth);
+}
+
+.carousel.products .carousel-card-image {
+  position: relative;
+  overflow: hidden;
+}
+
+.carousel.products .carousel-card-image img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+.carousel.products .carousel-card-product:hover {
+  transform: translateY(-2px);
+}
+.carousel.products .carousel-card-badge {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  background: var(--color-surface);
+  color: var(--color-text);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  font-family: var(--font-ui);
+}
+
+.carousel.products .carousel-card-body {
+  padding: var(--space-5) var(--space-4) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex: 1;
+}
+
+.carousel.products .carousel-card-category {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  font-family: var(--font-ui);
+}
+
+.carousel.products .carousel-card-title {
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-weight: var(--weight-normal);
+  color: var(--color-text);
+  margin: 0;
+  line-height: var(--leading-snug);
+}
+
+.carousel.products .carousel-card-desc {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: var(--leading-normal);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.carousel.products .carousel-card-price {
+  font-family: var(--font-heading);
+  font-size: var(--text-base);
+  font-weight: var(--weight-bold);
+  color: var(--color-text);
+  margin-top: auto;
+  padding-top: var(--space-3);
+}
+
+/* ══════════════════════════════════════════════════════════
+   REVIEWS VARIANT
+   ══════════════════════════════════════════════════════════ */
+
+.carousel.reviews .carousel-card-review {
+  background: #faeddc;
+  padding: var(--space-8) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.carousel.reviews .carousel-card-stars {
+  display: flex;
+  gap: 2px;
+  color: var(--color-warning);
+}
+
+.carousel.reviews .carousel-card-stars .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.carousel.reviews .carousel-card-quote {
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.carousel.reviews .carousel-card-quote p {
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  line-height: var(--leading-relaxed);
+  opacity: 0.7;
+  margin: 0;
+}
+
+.carousel.reviews .carousel-card-attribution {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: auto;
+}
+
+.carousel.reviews .carousel-card-author {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+  font-family: var(--font-heading);
+}
+
+.carousel.reviews .carousel-card-product {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════ */
+
+@media (width < 960px) {
+  .carousel-card {
+    flex: 0 0 calc(50% - var(--space-3));
+  }
+}
+
+@media (width < 600px) {
+  .carousel-card {
+    flex: 0 0 85%;
+  }
+
+  .carousel.reviews .carousel-card-review {
+    padding: var(--space-5);
+  }
+}
