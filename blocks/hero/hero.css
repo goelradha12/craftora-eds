@@ -9,7 +9,7 @@
   margin: 0 !important;
 }
 
-.hero-container > .hero-wrapper {
+.hero-container>.hero-wrapper {
   max-width: none;
   padding: 0;
 }

@@ -12,8 +12,7 @@ footer .footer.block {
 
 .footer-container {
     padding: var(--space-20) var(--content-padding);
-    width: var(--container-width);
-    max-width: var(--container-max);
+    max-width: calc(var(--content-width) + 2 * var(--content-padding));
     margin: 0 auto;
     position: relative;
 }
@@ -23,7 +22,7 @@ footer .footer.block {
     display: grid;
     grid-template-columns: 1.5fr 1fr 1fr 1fr;
     gap: var(--space-10);
-    max-width: var(--content-width);
+    max-width: calc(var(--content-width) + 2 * var(--content-padding));
     margin: 0 auto;
     padding-inline: var(--content-padding);
     padding-bottom: var(--space-12);
@@ -149,7 +148,7 @@ footer .footer.block {
 
 /* ── Bottom Section (Copyright & Legal) ── */
 .footer.block .footer-bottom {
-    max-width: var(--content-width);
+    max-width: calc(var(--content-width) + 2 * var(--content-padding));
     margin: var(--space-10) auto 0;
     display: flex;
     justify-content: space-between;

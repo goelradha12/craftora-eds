@@ -486,7 +486,7 @@ main > .section {
 }
 
 main > .section > div {
-  max-width: var(--content-width);
+  max-width: calc(var(--content-width) + 2 * var(--content-padding));
   margin: auto;
   padding: 0 var(--content-padding);
 }

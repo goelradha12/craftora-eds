@@ -95,6 +95,24 @@ export function getOrders() {
   } catch { return []; }
 }
 
+/**
+ * Get orders filtered for a specific user (by phone number).
+ * Supports both v1 (delivery.phone) and v2 (customer.phone) order formats.
+ * @param {object|null} user - User object with .phone property
+ * @returns {Array} Orders belonging to the user, sorted newest first
+ */
+export function getOrdersForUser(user) {
+  if (!user || !user.phone) return [];
+  const phone = String(user.phone).trim();
+  return getOrders()
+    .filter((o) => {
+      const v2Phone = String(o.customer?.phone || '').trim();
+      const v1Phone = String(o.delivery?.phone || '').trim();
+      return v2Phone === phone || v1Phone === phone;
+    })
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
+}
+
 export function addOrder(order) {
   const orders = getOrders();
   orders.unshift(order);
