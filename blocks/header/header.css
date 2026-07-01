@@ -24,7 +24,7 @@ header .nav--desktop {
   align-items: center;
   height: var(--nav-height);
   gap: var(--space-8);
-  max-width: var(--content-width);
+  max-width: calc(var(--content-width) + 2 * var(--content-padding));
   margin: 0 auto;
   padding: 0 var(--content-padding);
 }
@@ -32,6 +32,7 @@ header .nav--desktop {
 @media (width >= 900px) {
   header .nav--desktop {
     display: flex;
+    max-width: calc(var(--content-width) + 64px);
     padding: 0 32px;
   }
 

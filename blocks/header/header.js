@@ -75,7 +75,7 @@ function initSearch(nav) {
   async function loadProducts() {
     if (products) return products;
     try {
-      const r = await fetch('/content/products.json');
+      const r = await fetch('/data/products.json');
       const d = await r.json();
       products = d.products || d.data || [];
     } catch { products = []; }
