@@ -52,7 +52,24 @@
 .carousel-btn .icon {
   width: 16px;
   height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+/* Icon is rendered as <img> by decorateIcons — use filter to colorize */
+.carousel-btn .icon img {
+  width: 16px;
+  height: 16px;
+  display: block;
+  filter: invert(0); /* black on white background */
+  transition: filter var(--transition-base);
+}
+
+.carousel-btn:hover:not(:disabled) .icon img {
+  filter: invert(1); /* white on dark background */
+}
+
 
 /* ── Track (scrollable) ── */
 .carousel-track {
@@ -208,6 +225,17 @@
 .carousel.reviews .carousel-card-stars .icon {
   width: 16px;
   height: 16px;
+  display: flex;
+}
+
+/* Star SVGs are loaded as <img> — apply amber filter */
+.carousel.reviews .carousel-card-stars .icon img {
+  width: 16px;
+  height: 16px;
+  display: block;
+  /* Convert black → amber #d97706:
+     invert → sepia → saturate → hue-rotate to match --color-warning */
+  filter: invert(58%) sepia(72%) saturate(600%) hue-rotate(2deg) brightness(95%);
 }
 
 .carousel.reviews .carousel-card-quote {

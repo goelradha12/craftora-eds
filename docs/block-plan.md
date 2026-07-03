@@ -190,7 +190,7 @@ Columns authored as simple link lists under headings.
 ```
 | Product Listing          |
 |--------------------------|
-| /content/products.json   |
+| /library/products.json   |
 ```
 
 (Block renders UI entirely via JS from data)
@@ -221,7 +221,7 @@ Columns authored as simple link lists under headings.
 ```
 | Product Detail           |
 |--------------------------|
-| /content/products.json   |
+| /library/products.json   |
 ```
 
 (Block renders entirely via JS based on URL param `?id=`)
@@ -292,7 +292,7 @@ Columns authored as simple link lists under headings.
 ```
 | Featured Products        |                        |
 |--------------------------|------------------------|
-| Try Our Featured Products | /content/products.json |
+| Try Our Featured Products | /library/products.json |
 ```
 
 **Files:**
@@ -715,7 +715,7 @@ Columns authored as simple link lists under headings.
 ```
 | Design Studio            |                          |
 |--------------------------|--------------------------|
-| /content/products.json   | /content/templates.json  |
+| /library/products.json   | /library/templates.json  |
 ```
 
 (Block takes over the full page layout — no standard header/footer rendered)
@@ -753,9 +753,9 @@ Columns authored as simple link lists under headings.
 
 | Path | Format | Purpose | Source |
 |------|--------|---------|--------|
-| `/content/products.json` | JSON | Product catalog (12 products) | Spreadsheet or committed file |
-| `/content/templates.json` | JSON | Design templates (41 templates) | Committed file |
-| `/content/reviews.json` | JSON | Customer reviews (5 reviews) | Spreadsheet or committed file |
+| `/library/products.json` | JSON | Product catalog (12 products) | Spreadsheet or committed file |
+| `/library/templates.json` | JSON | Design templates (41 templates) | Committed file |
+| `/library/reviews.json` | JSON | Customer reviews (5 reviews) | Spreadsheet or committed file |
 
 ---
 

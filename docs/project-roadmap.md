@@ -73,9 +73,9 @@
 
 | Endpoint | Format | Used By |
 |----------|--------|---------|
-| `/content/products.json` | JSON (multi-sheet) | product-listing, product-detail, carousel (products), header (search) |
-| `/content/templates.json` | JSON (flat array) | design-studio |
-| `/content/reviews.json` | JSON (sheet) | carousel (reviews) |
+| `/library/products.json` | JSON (multi-sheet; rows at `data.data`, specs at `data-2`) | product-listing, product-detail, carousel (products), header (search) |
+| `/library/templates.json` | JSON (single sheet; array at `data`) | design-studio |
+| `/library/reviews.json` | JSON (single sheet; array at `data`) | carousel (reviews) |
 
 ### localStorage Keys
 

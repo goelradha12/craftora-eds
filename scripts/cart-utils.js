@@ -8,17 +8,29 @@ const CART_KEY = 'cart';
 const ORDERS_KEY = 'craftora_orders';
 const CHECKOUT_SESSION_KEY = 'craftora_checkout';
 
+/**
+ * Name of the same-tab cart-change event. Cross-tab changes are covered by
+ * the native `storage` event; this custom event covers changes made in the
+ * current tab, which `storage` does not fire for.
+ */
+export const CART_UPDATED_EVENT = 'cart-updated';
+
+/* Notifies same-tab listeners that the cart changed. Consumers (header badge,
+   customizer badge, cart page) listen for CART_UPDATED_EVENT and re-read the
+   cart themselves — the event carries no payload, keeping one source of truth. */
+function notifyCartChanged() {
+  window.dispatchEvent(new CustomEvent(CART_UPDATED_EVENT));
+}
+
 /* ── Formatting ── */
 
 export function money(n) {
   return `₹${Number(n || 0).toLocaleString('en-IN')}`;
 }
 
-export function esc(str) {
-  return String(str ?? '').replace(/[&<>"']/g, (m) => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
-  })[m]);
-}
+// esc() is a generic HTML escaper owned by helpers.js; re-exported here so cart
+// consumers can pull esc + money from a single module (one source of truth).
+export { esc } from './helpers.js';
 
 /* ── Cart CRUD ── */
 
@@ -30,7 +42,7 @@ export function getCart() {
 
 export function saveCart(items) {
   localStorage.setItem(CART_KEY, JSON.stringify(items));
-  updateCartBadges();
+  notifyCartChanged();
 }
 
 export function addToCart(item) {
@@ -64,7 +76,7 @@ export function updateQty(key, delta) {
 
 export function clearCart() {
   localStorage.removeItem(CART_KEY);
-  updateCartBadges();
+  notifyCartChanged();
 }
 
 /* ── Cart Count ── */

@@ -18,3 +18,6 @@ export function getDesignFee(category) {
 export function calculateItemPrice(basePrice, category, designRequired) {
   return basePrice + (designRequired ? getDesignFee(category) : 0);
 }
+
+// money() lives in scripts/cart-utils.js (single source of truth) — import it
+// from there rather than duplicating the formatter here.

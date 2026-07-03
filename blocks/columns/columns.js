@@ -1,3 +1,62 @@
+import { esc, getOrders } from '../../scripts/cart-utils.js';
+
+/**
+ * `thank-you` variant — order confirmation card.
+ * Authored rows: [heading + message] · [detail labels] · [CTA] · [CTA].
+ * Order data comes from ?orderId= → localStorage.lastOrderId → latest order,
+ * via the shared cart-utils; missing data falls back gracefully.
+ */
+function decorateThankYou(block) {
+  const rows = [...block.children];
+  const heading = block.querySelector('h1, h2')?.textContent?.trim() || 'Thank You for Your Order!';
+  const message = rows[0]?.querySelector('p')?.textContent?.trim()
+    || 'Your order has been placed successfully.';
+  const labels = [...(rows[1]?.querySelectorAll('p') || [])].map((p) => p.textContent.trim()).filter(Boolean);
+  const detailLabels = labels.length ? labels : ['Order ID', 'Estimated Delivery', 'Payment'];
+  const ctas = [...block.querySelectorAll('a')]
+    .map((a) => ({ href: a.getAttribute('href') || '#', text: a.textContent.trim() }));
+
+  // Resolve the order via shared utilities (no duplicated storage logic).
+  const orderId = new URLSearchParams(window.location.search).get('orderId')
+    || localStorage.getItem('lastOrderId') || '';
+  let order = null;
+  try {
+    const orders = getOrders();
+    order = (orderId && orders.find((o) => String(o.id) === String(orderId))) || orders[0] || null;
+  } catch { order = null; }
+
+  const resolvedId = order?.id || orderId;
+  const values = {
+    id: resolvedId ? `#${resolvedId}` : '—',
+    delivery: '5–7 Business Days',
+    payment: order?.payment?.label || 'Confirmed',
+  };
+  const valueFor = (label) => {
+    const k = label.toLowerCase();
+    if (k.includes('order')) return values.id;
+    if (k.includes('deliver')) return values.delivery;
+    if (k.includes('payment')) return values.payment;
+    return '—';
+  };
+
+  const check = '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>';
+  const detailsHTML = detailLabels.map((label) => `<div class="columns-thankyou-row">
+      <span class="columns-thankyou-label">${esc(label)}</span>
+      <span class="columns-thankyou-value">${esc(valueFor(label))}</span>
+    </div>`).join('');
+  const actionsHTML = ctas.length
+    ? `<div class="columns-thankyou-actions">${ctas.map((c, i) => `<a class="columns-thankyou-btn ${i === 0 ? 'primary' : 'secondary'}" href="${esc(c.href)}">${esc(c.text)}</a>`).join('')}</div>`
+    : '';
+
+  block.innerHTML = `<div class="columns-thankyou">
+    <div class="columns-thankyou-icon">${check}</div>
+    <h1 class="columns-thankyou-heading">${esc(heading)}</h1>
+    <p class="columns-thankyou-message">${esc(message)}</p>
+    <div class="columns-thankyou-details">${detailsHTML}</div>
+    ${actionsHTML}
+  </div>`;
+}
+
 /**
  * Extracts a search query from a Google Maps URL.
  * Handles formats like:
@@ -21,6 +80,11 @@ function extractMapQuery(url) {
 }
 
 export default function decorate(block) {
+  if (block.classList.contains('thank-you')) {
+    decorateThankYou(block);
+    return;
+  }
+
   const cols = [...block.firstElementChild.children];
   block.classList.add(`columns-${cols.length}-cols`);
 

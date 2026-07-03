@@ -4,6 +4,15 @@
    Matches legacy craftora/styles/products.css
    ============================================================ */
 
+/* ── "similar" variant heading (You may also like) ── */
+.product-list-heading {
+  font-family: var(--font-display);
+  font-weight: var(--weight-normal);
+  font-size: var(--text-xl);
+  color: var(--color-primary);
+  margin: 0 0 var(--space-8);
+}
+
 /* ── Filter tabs ── */
 .product-list-filters {
   display: flex;
@@ -80,15 +89,12 @@
 }
 
 .product-list-card-image {
-  width: 100%;
   aspect-ratio: 4 / 3;
   background-size: cover;
   background-position: center;
   background-color: var(--color-surface-warm);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  margin: var(--space-3);
-  width: calc(100% - var(--space-6));
 }
 
 .product-list-card-body {
@@ -209,4 +215,138 @@
   .product-list-filters::-webkit-scrollbar {
     display: none;
   }
+}
+
+/* ── "small" modifier: legacy wishlist-card size (minmax 240) + compact,
+   description-free cards. Without it, cards use the default legacy products
+   listing size (minmax 280). Drives the similar and wishlist variants. ── */
+.product-list.small .product-list-grid {
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-6);
+}
+
+.product-list.small .product-list-card-body {
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  gap: var(--space-1);
+}
+
+.product-list.small .product-list-card-title {
+  font-size: var(--text-base);
+}
+
+.product-list.small .product-list-card-price {
+  font-size: var(--text-sm);
+}
+
+/* ── "wishlist" variant ── */
+.product-list-card-remove {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  z-index: 2;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-error);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: background var(--transition-base), transform var(--transition-base);
+}
+
+.product-list-card-remove:hover {
+  background: var(--color-error-bg);
+  transform: scale(1.1);
+}
+
+.product-list-wishlist-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.product-list-wishlist-header .product-list-heading {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.product-list-wishlist-header .icon,
+.product-list-wishlist-header .icon img {
+  width: 24px;
+  height: 24px;
+}
+
+.product-list-wishlist-count {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: var(--weight-normal);
+  color: var(--color-text-muted);
+}
+
+.product-list-clear-btn {
+  padding: var(--space-2) var(--space-4);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--color-text-muted);
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+  transition: border-color var(--transition-base), color var(--transition-base);
+}
+
+.product-list-clear-btn:hover {
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+.product-list-wishlist-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: var(--space-16) var(--space-4);
+}
+
+.product-list-wishlist-empty svg {
+  color: var(--color-text-muted);
+  opacity: 0.4;
+  margin-bottom: var(--space-4);
+}
+
+.product-list-wishlist-empty h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-normal);
+  color: var(--color-primary);
+  margin: 0 0 var(--space-2);
+}
+
+.product-list-wishlist-empty p {
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-6);
+}
+
+.product-list-browse-btn {
+  display: inline-block;
+  padding: var(--space-3) var(--space-8);
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+  border-radius: var(--radius-md);
+  font-family: var(--font-heading);
+  font-weight: var(--weight-bold);
+  text-decoration: none;
+  transition: background var(--transition-base);
+}
+
+.product-list-browse-btn:hover {
+  background: var(--color-accent-hover);
 }

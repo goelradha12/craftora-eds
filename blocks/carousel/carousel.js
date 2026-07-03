@@ -2,7 +2,7 @@
  * Carousel Block — Craftora EDS
  *
  * Renders a horizontally scrollable row of cards from a JSON endpoint.
- * Supports two variants: .carousel.products and .carousel.reviews
+ * Variants: .carousel.products, .carousel.reviews
  *
  * Authored input (two rows):
  *   Row 1: "Heading" label | actual heading markup (h2)
@@ -121,13 +121,24 @@ function initScrollControls(block, track) {
     track.scrollBy({ left: scrollAmount(), behavior: 'smooth' });
   });
 
-  // Update button states on scroll
+  // Update button states. Disable both only when there's genuinely no overflow;
+  // otherwise enable "next" so it activates as soon as there's room to scroll.
   const updateButtons = () => {
-    prevBtn.disabled = track.scrollLeft <= 0;
-    nextBtn.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
+    const maxScroll = track.scrollWidth - track.clientWidth;
+    const overflows = maxScroll > 2;
+    prevBtn.disabled = overflows ? track.scrollLeft <= 0 : true;
+    nextBtn.disabled = overflows ? track.scrollLeft >= maxScroll - 2 : true;
   };
 
   track.addEventListener('scroll', updateButtons, { passive: true });
+  // Re-evaluate after layout settles and on resize, so the buttons recover from
+  // a zero/unsized measurement at decorate time and stay correct on resize.
+  requestAnimationFrame(updateButtons);
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(updateButtons).observe(track);
+  } else {
+    window.addEventListener('resize', updateButtons);
+  }
   updateButtons();
 }
 

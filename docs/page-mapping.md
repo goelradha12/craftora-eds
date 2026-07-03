@@ -43,7 +43,7 @@
 2. `product-listing` — category tabs + product card grid
 
 **Functionality:**
-- Fetch `/content/products.json`
+- Fetch `/library/products.json`
 - Render category filter tabs (All, Diary, Bottle, Tshirt, Cup)
 - Read `?category=` URL param for initial filter
 - Render product cards (image, badge, category, title, desc, price, wishlist btn)

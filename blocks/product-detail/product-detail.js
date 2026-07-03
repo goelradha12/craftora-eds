@@ -8,43 +8,21 @@
  */
 
 import { money, esc, addToCart, setCheckoutSession } from '../../scripts/cart-utils.js';
+import { getUser } from '../../scripts/auth.js';
 import { getDesignFee, calculateItemPrice } from '../../scripts/pricing.js';
 import { toggleWishlist, isWishlisted } from '../../scripts/wishlist-utils.js';
+import { fetchProducts, resolveAssetPath } from '../../scripts/product-data.js';
+import { isLightColor, getColorName as lookupColorName, COLOR_PALETTE } from '../../scripts/color-utils.js';
 import { showDesignPreview, designExists } from '../../scripts/design-preview.js';
 
-/* ── Color palette (matches legacy) ── */
-const COLORS = {
-  pacificBlue: '#B0DDF7', angelBlue: '#A7BFE5', brightBlue: '#50C6F6',
-  royalBlue: '#0055B8', navyBlue: '#190850', teal: '#1FAAAD',
-  pastelGreen: '#CBE5BE', freshGreen: '#ACC636', emerald: '#6EA864',
-  forestGreen: '#4B7A47', lavender: '#C7A2D0', plum: '#7B6AB0',
-  violet: '#6D2B76', pastelPink: '#F7D8E7', rose: '#F1719B',
-  hotPink: '#EE4791', fuschia: '#DC126B', peach: '#F7BCA4',
-  prettyRed: '#E12D3A', burgundy: '#8E2D30', happyOrange: '#F79854',
-  tangerine: '#F47F25', rust: '#BF6227', buttercup: '#FFF546',
-  mustardYellow: '#E3C34D', sand: '#E1CF85', tan: '#D7CDB4',
-  softGray: '#D0D2D4', charcoal: '#58585A', black: '#231F20',
-};
+/* ── Color palette (shared full set) ── */
+const COLORS = COLOR_PALETTE;
 const PALETTE_KEYS = Object.keys(COLORS);
 
+// getColorName/isLightColor live in scripts/color-utils.js. Bind this block's
+// COLORS palette so existing call sites stay unchanged.
 function getColorName(hex) {
-  const h = String(hex).toLowerCase();
-  const key = PALETTE_KEYS.find((k) => COLORS[k].toLowerCase() === h);
-  if (!key) return hex;
-  return key.replace(/([A-Z])/g, ' $1').replace(/^./, (s) => s.toUpperCase());
-}
-
-function isLightColor(hex) {
-  const c = hex.replace('#', '');
-  const r = parseInt(c.substr(0, 2), 16);
-  const g = parseInt(c.substr(2, 2), 16);
-  const b = parseInt(c.substr(4, 2), 16);
-  return (r * 299 + g * 587 + b * 114) / 1000 > 200;
-}
-
-function resolveImg(path) {
-  if (!path) return '';
-  return path.startsWith('./') ? path.slice(1) : path;
+  return lookupColorName(hex, COLORS);
 }
 
 /* ── State ── */
@@ -59,6 +37,42 @@ function loadCustomization(id) {
   } catch { return null; }
 }
 
+/* Stable hash of a design (excludes preview/timestamp) so different designs
+   for the same product/size/color become distinct cart line items. */
+function designHash(customization) {
+  if (!customization) return 'plain';
+  const data = {};
+  Object.keys(customization).forEach((k) => {
+    if (k !== 'previewImage' && k !== 'generatedAt') data[k] = customization[k];
+  });
+  const s = JSON.stringify(data);
+  let h = 0;
+  for (let i = 0; i < s.length; i += 1) {
+    // eslint-disable-next-line no-bitwise
+    h = (((h << 5) - h) + s.charCodeAt(i)) | 0;
+  }
+  return String(h);
+}
+
+/* Add-to-cart confirmation toast (matches legacy UX). */
+function showToast() {
+  document.getElementById('pd-toast')?.remove();
+  const toast = document.createElement('div');
+  toast.id = 'pd-toast';
+  toast.className = 'pd-toast';
+  toast.innerHTML = '<span class="pd-toast-msg">Added to cart</span>'
+    + '<a class="pd-toast-cta" href="/cart">Go to Cart</a>'
+    + '<button class="pd-toast-close" type="button" aria-label="Dismiss">×</button>';
+  document.body.append(toast);
+  requestAnimationFrame(() => toast.classList.add('show'));
+  const close = () => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 250);
+  };
+  toast.querySelector('.pd-toast-close').addEventListener('click', close);
+  setTimeout(close, 4000);
+}
+
 /* ── Main decorate ── */
 export default async function decorate(block) {
   const link = block.querySelector('a');
@@ -71,17 +85,7 @@ export default async function decorate(block) {
   if (!productId) { block.innerHTML = renderError('No product specified.'); return; }
 
   try {
-    const resp = await fetch(jsonUrl);
-    if (!resp.ok) throw new Error('fetch failed');
-    console.log(resp);
-    const json = await resp.json();
-
-    // Handle multi-sheet or flat
-    let products = [];
-    if (json.data?.data && Array.isArray(json.data.data)) products = json.data.data;
-    else if (Array.isArray(json.data)) products = json.data;
-    else if (Array.isArray(json.products)) products = json.products;
-
+    const products = await fetchProducts(jsonUrl);
     state.products = products;
     state.product = products.find((p) => p.id === productId);
     if (!state.product) { block.innerHTML = renderError('Product not found.'); return; }
@@ -102,7 +106,7 @@ export default async function decorate(block) {
 
 /* ── Render full page ── */
 function renderPage(p) {
-  const images = [resolveImg(p.imageDefault || p.images?.default), ...(p.imageOthers ? p.imageOthers.split(', ').map(resolveImg) : (p.images?.others || []).map(resolveImg))].filter(Boolean);
+  const images = [resolveAssetPath(p.imageDefault || p.images?.default), ...(p.imageOthers ? p.imageOthers.split(', ').map(resolveAssetPath) : (p.images?.others || []).map(resolveAssetPath))].filter(Boolean);
   const badges = p.badges ? (typeof p.badges === 'string' ? p.badges.split(', ') : p.badges) : [];
   const sizes = p.sizes ? (typeof p.sizes === 'string' ? p.sizes.split(', ') : p.sizes) : [];
   const isSaved = isWishlisted(p.id);
@@ -144,7 +148,17 @@ function renderPage(p) {
           <div class="pd-option"><span class="pd-option-label">Quantity</span><div class="pd-qty"><button class="pd-qty-btn" id="pdQtyMinus" type="button" disabled>−</button><output class="pd-qty-val" id="pdQtyVal">1</output><button class="pd-qty-btn" id="pdQtyPlus" type="button">+</button></div></div>
         </div>
         <div class="pd-design-toggle"><span class="pd-option-label">Custom Design?</span><div class="pd-design-radios"><label><input type="radio" name="pd-design" value="no" checked ${outOfStock ? 'disabled' : ''}><span>No</span></label><label><input type="radio" name="pd-design" value="yes" ${outOfStock ? 'disabled' : ''}><span>Yes, customize</span></label></div></div>
-        <div class="pd-cust-card missing" id="pdCustCard" hidden><div class="pd-cust-icon" id="pdCustIcon">🎨</div><div class="pd-cust-text"><p class="pd-cust-title" id="pdCustTitle">Design required</p><p class="pd-cust-desc" id="pdCustDesc">Open the studio and save your design.</p></div></div>
+        <div class="pd-cust-card missing" id="pdCustCard" hidden>
+          <div class="pd-cust-preview-wrap">
+            <img id="pdCustPreview" alt="Saved design preview" hidden>
+            <span class="pd-cust-icon" id="pdCustIcon">🎨</span>
+          </div>
+          <div class="pd-cust-text">
+            <p class="pd-cust-title" id="pdCustTitle">Design required</p>
+            <p class="pd-cust-desc" id="pdCustDesc">Open the studio and save your design.</p>
+            <button class="pd-view-design-btn" id="pdViewDesignBtn" type="button" hidden>View design</button>
+          </div>
+        </div>
         <div class="pd-actions">
           <button class="pd-customize-btn" id="pdCustomizeBtn" ${outOfStock ? 'disabled' : ''} hidden><span id="pdCustBtnLabel">Open Design Studio</span></button>
           <div class="pd-btn-row"><button class="pd-add-btn" id="pdAddBtn" ${outOfStock ? 'disabled' : ''}>Add to Cart</button><button class="pd-buy-btn" id="pdBuyBtn" ${outOfStock ? 'disabled' : ''}>Buy Now</button></div>
@@ -152,8 +166,7 @@ function renderPage(p) {
         <div class="pd-trust"><span>🚚 Free Shipping</span><span>↩️ Easy Returns</span><span>🔒 Secure Payment</span></div>
         ${details.length ? renderDetails(details) : ''}
       </div>
-    </section>
-    ${renderRelated(p)}`;
+    </section>`;
 }
 
 function renderColorPicker() {
@@ -161,7 +174,8 @@ function renderColorPicker() {
   return `<div class="pd-color-section"><span class="pd-option-label">Color</span>
     <button class="pd-color-trigger" id="pdColorTrigger" type="button" aria-expanded="false">
       <span class="pd-color-dot" id="pdColorDot" style="background:${active}"></span>
-      <span id="pdColorName">${getColorName(active)}</span>
+      <span class="pd-color-name" id="pdColorName">${getColorName(active)}</span>
+      <svg class="pd-color-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
     <div class="pd-color-panel" id="pdColorPanel" hidden>
       <div class="pd-color-swatches">${PALETTE_KEYS.map((k) => { const hex = COLORS[k]; return `<button class="pd-swatch ${hex.toLowerCase() === active.toLowerCase() ? 'selected' : ''} ${isLightColor(hex) ? 'light' : ''}" data-color="${hex}" data-name="${getColorName(hex)}" style="background:${hex}" type="button" title="${getColorName(hex)}"></button>`; }).join('')}</div>
@@ -170,12 +184,6 @@ function renderColorPicker() {
 
 function renderDetails(details) {
   return `<div class="pd-details"><button class="pd-details-toggle" id="pdDetailsToggle" type="button" aria-expanded="true"><span>Product Details</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button><dl class="pd-details-list" id="pdDetailsBody">${details.map((d) => `<div class="pd-details-row"><dt>${esc(d.label || d.key || '')}</dt><dd>${esc(d.value || '')}</dd></div>`).join('')}</dl></div>`;
-}
-
-function renderRelated(p) {
-  const related = state.products.filter((x) => x.category === p.category && x.id !== p.id).slice(0, 4);
-  if (!related.length) return '';
-  return `<section class="pd-related"><h2>You May Also Like</h2><div class="pd-related-grid">${related.map((r) => `<a class="pd-related-card" href="/product?id=${esc(r.id)}"><img src="${resolveImg(r.imageDefault || r.images?.default || '')}" alt="${esc(r.name)}" loading="lazy" width="273" height="273"><div class="pd-related-body"><span class="pd-related-cat">${esc(r.category)}</span><h3>${esc(r.name)}</h3><span>${money(r.basePrice)}</span></div></a>`).join('')}</div></section>`;
 }
 
 function renderError(msg) {
@@ -221,14 +229,35 @@ function updateUI(block) {
 }
 
 function updateCustCard(block) {
+  const p = state.product;
   const has = !!state.customization;
+  const outOfStock = Number(p.stock) <= 0;
   const card = block.querySelector('#pdCustCard');
   const icon = block.querySelector('#pdCustIcon');
+  const preview = block.querySelector('#pdCustPreview');
   const title = block.querySelector('#pdCustTitle');
   const desc = block.querySelector('#pdCustDesc');
   const label = block.querySelector('#pdCustBtnLabel');
+  const viewBtn = block.querySelector('#pdViewDesignBtn');
   if (!card) return;
-  if (has) {
+
+  const previewImg = has ? state.customization.previewImage : '';
+  if (preview && previewImg && !outOfStock) {
+    preview.src = previewImg;
+    preview.hidden = false;
+    if (icon) icon.hidden = true;
+  } else {
+    if (preview) preview.hidden = true;
+    if (icon) icon.hidden = false;
+  }
+  if (viewBtn) viewBtn.hidden = !(has && !outOfStock && designExists(p.id));
+
+  if (outOfStock) {
+    card.className = 'pd-cust-card missing';
+    if (icon) icon.textContent = '✗';
+    if (title) title.textContent = 'Out of stock';
+    if (desc) desc.textContent = 'This product is currently unavailable.';
+  } else if (has) {
     card.className = 'pd-cust-card ready';
     if (icon) icon.textContent = '✓';
     if (title) title.textContent = 'Design saved — ready to order';
@@ -271,7 +300,7 @@ function bindEvents(block) {
 
   // Wishlist
   block.querySelector('#pdWishBtn')?.addEventListener('click', () => {
-    const now = toggleWishlist({ id: p.id, name: p.name, category: p.category, price: Number(p.basePrice), image: resolveImg(p.imageDefault || p.images?.default || '') });
+    const now = toggleWishlist({ id: p.id, name: p.name, category: p.category, price: Number(p.basePrice), image: resolveAssetPath(p.imageDefault || p.images?.default || '') });
     const btn = block.querySelector('#pdWishBtn');
     btn.classList.toggle('wishlisted', now);
     const svg = btn.querySelector('path');
@@ -280,8 +309,11 @@ function bindEvents(block) {
 
   // Color picker
   block.querySelector('#pdColorTrigger')?.addEventListener('click', () => {
+    const trigger = block.querySelector('#pdColorTrigger');
     const panel = block.querySelector('#pdColorPanel');
-    panel.hidden = !panel.hidden;
+    const willOpen = panel.hidden;
+    panel.hidden = !willOpen;
+    trigger.setAttribute('aria-expanded', String(willOpen));
   });
   block.querySelector('.pd-color-swatches')?.addEventListener('click', (e) => {
     const swatch = e.target.closest('.pd-swatch');
@@ -292,7 +324,11 @@ function bindEvents(block) {
     block.querySelector('#pdColorDot').style.background = swatch.dataset.color;
     block.querySelector('#pdColorName').textContent = swatch.dataset.name;
     block.querySelector('#pdColorPanel').hidden = true;
+    block.querySelector('#pdColorTrigger').setAttribute('aria-expanded', 'false');
   });
+
+  // View saved design
+  block.querySelector('#pdViewDesignBtn')?.addEventListener('click', () => showDesignPreview(p.id));
 
   // Design toggle
   block.querySelectorAll('input[name="pd-design"]').forEach((r) => {
@@ -317,13 +353,17 @@ function bindEvents(block) {
   block.querySelector('#pdAddBtn')?.addEventListener('click', () => handleAddToCart(block, false));
   block.querySelector('#pdBuyBtn')?.addEventListener('click', () => handleAddToCart(block, true));
 
-  // Listen for design updates
-  window.addEventListener('storage', (e) => {
-    if (e.key === `designData_${p.id}`) {
-      state.customization = loadCustomization(p.id);
-      if (state.customization) { state.designRequired = true; setDesignRadio(block, true); }
-      updateUI(block);
-    }
+  // Re-sync the saved design across tabs (storage), on back-nav from the studio
+  // (pageshow / bfcache), and on the studio's in-tab save event.
+  const syncDesign = () => {
+    state.customization = loadCustomization(p.id);
+    if (state.customization) { state.designRequired = true; setDesignRadio(block, true); }
+    updateUI(block);
+  };
+  window.addEventListener('storage', (e) => { if (e.key === `designData_${p.id}`) syncDesign(); });
+  window.addEventListener('pageshow', syncDesign);
+  window.addEventListener('craftora-design-updated', (e) => {
+    if (e.detail?.productId === p.id) syncDesign();
   });
 }
 
@@ -342,12 +382,12 @@ function handleAddToCart(block, redirect) {
   const totalPrice = calculateItemPrice(Number(p.basePrice), p.category, state.designRequired);
 
   const key = state.designRequired
-    ? `${p.id}__${size}__${color}__custom`
+    ? `${p.id}__${size}__${color}__${designHash(state.customization)}`
     : `${p.id}__${size}__${color}__plain`;
 
   const item = {
     key, id: p.id, name: p.name,
-    image: (state.designRequired && state.customization?.previewImage) ? state.customization.previewImage : resolveImg(p.imageDefault || p.images?.default || ''),
+    image: (state.designRequired && state.customization?.previewImage) ? state.customization.previewImage : resolveAssetPath(p.imageDefault || p.images?.default || ''),
     category: p.category, basePrice: Number(p.basePrice), designFee, price: totalPrice,
     color, colorName, size, qty: state.qty,
     customized: state.designRequired, designRequired: state.designRequired,
@@ -355,10 +395,20 @@ function handleAddToCart(block, redirect) {
   };
 
   if (redirect) {
+    // Buy Now requires a logged-in user (matches legacy).
+    const user = getUser();
+    if (!user || !user.phone) {
+      // eslint-disable-next-line no-alert
+      alert('You are not logged in. Please log in to continue with your purchase.');
+      const back = encodeURIComponent(window.location.pathname + window.location.search);
+      window.location.href = `/login?redirect=${back}`;
+      return;
+    }
     setCheckoutSession('buy-now', [item]);
     window.location.href = '/checkout';
   } else {
     addToCart(item);
+    showToast();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }

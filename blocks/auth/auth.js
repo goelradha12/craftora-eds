@@ -12,53 +12,9 @@
  *   Row 3 → Switch-link paragraph (with <a>)
  */
 
-const AUTH_KEY = 'craftora_user';
-const ACCOUNTS_KEY = 'craftora_accounts';
-
-/* ── Auth helpers ── */
-function getUser() {
-  try { return JSON.parse(localStorage.getItem(AUTH_KEY)); } catch { return null; }
-}
-
-function normalizePhone(raw) {
-  return String(raw ?? '').replace(/\D/g, '').slice(-10);
-}
-
-function isValidPhone(phone) {
-  return /^[6-9]\d{9}$/.test(normalizePhone(phone));
-}
-
-function getAccounts() {
-  try { return JSON.parse(localStorage.getItem(ACCOUNTS_KEY) || '[]'); } catch { return []; }
-}
-
-function attemptLogin(phone, password) {
-  const normalized = normalizePhone(phone);
-  const accounts = getAccounts();
-  const account = accounts.find((a) => a.phone === normalized);
-  if (!account) return { ok: false, error: 'No account found with this phone number.' };
-  if (account.password !== password) return { ok: false, error: 'Incorrect password.' };
-  const { password: pw, ...session } = account;
-  localStorage.setItem(AUTH_KEY, JSON.stringify(session));
-  return { ok: true };
-}
-
-function attemptSignup({ name, phone, password }) {
-  const normalized = normalizePhone(phone);
-  const accounts = getAccounts();
-  if (accounts.find((a) => a.phone === normalized)) {
-    return { ok: false, error: 'An account with this phone number already exists.' };
-  }
-  const user = {
-    name, phone: normalized, email: '', address: '', addressObj: {},
-    password, joinedAt: new Date().toISOString(),
-  };
-  accounts.push(user);
-  localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts));
-  const { password: pw, ...session } = user;
-  localStorage.setItem(AUTH_KEY, JSON.stringify(session));
-  return { ok: true };
-}
+import {
+  getUser, isValidPhone, attemptLogin, attemptSignup,
+} from '../../scripts/auth.js';
 
 /* ── Icons ── */
 const ICON = {

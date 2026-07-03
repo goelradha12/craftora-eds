@@ -167,7 +167,7 @@ Subsequent rows are content items (2 or 3 columns depending on variant).
 **DA Live Table:**
 ```
 | Product Listing |
-| /content/products.json |
+| /library/products.json |
 ```
 (Minimal authored input — block fetches all data from JSON)
 
@@ -188,7 +188,7 @@ Subsequent rows are content items (2 or 3 columns depending on variant).
 **DA Live Table:**
 ```
 | Product Detail |
-| /content/products.json |
+| /library/products.json |
 ```
 
 **JS:** Read `?id=` param, fetch product data, render: breadcrumbs, image gallery (main + thumbs), color picker (60+ swatches), size selector, qty control, design toggle, customization status card, add-to-cart + buy-now buttons, trust badges, product details accordion, related products grid.
@@ -335,8 +335,8 @@ Subsequent rows are content items (2 or 3 columns depending on variant).
 **DA Live Table:**
 ```
 | Design Studio |
-| /content/products.json |
-| /content/templates.json |
+| /library/products.json |
+| /library/templates.json |
 ```
 
 **JS:** Complete standalone app — sidebar panels (color, text, templates, upload), canvas with draggable layers, save to localStorage, add-to-cart integration.

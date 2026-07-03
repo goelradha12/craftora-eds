@@ -1,5 +1,8 @@
 import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
+import { updateCartBadges, CART_UPDATED_EVENT, esc } from '../../scripts/cart-utils.js';
+import { getUser, logout } from '../../scripts/auth.js';
+import { fetchProducts, normalizeProduct } from '../../scripts/product-data.js';
 
 /**
  * Craftora Header Block
@@ -9,44 +12,9 @@ import { loadFragment } from '../fragment/fragment.js';
 
 const MQ_DESKTOP = window.matchMedia('(min-width: 900px)');
 
-/* ── Auth helpers ── */
-function getUser() {
-  try {
-    return JSON.parse(localStorage.getItem('craftora_user') || 'null');
-  } catch { return null; }
-}
-
-function logout() {
-  localStorage.removeItem('craftora_user');
-  window.location.href = '/';
-}
-
-/* ── Cart helpers ── */
-function getCartCount() {
-  try {
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    return cart.reduce((sum, i) => sum + (i.qty ?? 1), 0);
-  } catch { return 0; }
-}
-
-function updateCartBadges() {
-  const count = getCartCount();
-  document.querySelectorAll('.nav-cart-badge').forEach((badge) => {
-    if (count > 0) {
-      badge.textContent = count > 99 ? '99+' : count;
-      badge.classList.remove('hidden');
-    } else {
-      badge.classList.add('hidden');
-    }
-  });
-}
-
-/* ── Escape HTML ── */
-function esc(str) {
-  return String(str ?? '').replace(/[&<>"']/g, (m) => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
-  })[m]);
-}
+/* Auth helpers (getUser, logout) live in scripts/auth.js (single source of
+   truth). Cart count + badge rendering live in scripts/cart-utils.js (single source of
+   truth). The header only listens for change events and re-renders the badge. */
 
 /* ── SVG icons (inline for performance, no extra requests) ── */
 const ICON = {
@@ -75,9 +43,7 @@ function initSearch(nav) {
   async function loadProducts() {
     if (products) return products;
     try {
-      const r = await fetch('/data/products.json');
-      const d = await r.json();
-      products = d.products || d.data || [];
+      products = (await fetchProducts()).map(normalizeProduct);
     } catch { products = []; }
     return products;
   }
@@ -93,7 +59,7 @@ function initSearch(nav) {
       dropdown.innerHTML = '<div class="nav__search-empty">No products found</div>';
     } else {
       dropdown.innerHTML = hits.map((p) => `<a class="nav__search-item" href="/product?id=${encodeURIComponent(p.id)}">
-        <img src="${esc(p.images?.default || '')}" alt="" width="40" height="40" loading="lazy">
+        <img src="${esc(p.imageDefault || '')}" alt="" width="40" height="40" loading="lazy">
         <span class="nav__search-info"><span class="nav__search-name">${esc(p.name)}</span><span class="nav__search-cat">${esc(p.category || '')}</span></span>
       </a>`).join('');
     }
@@ -436,6 +402,11 @@ export default async function decorate(block) {
 
   // ── Init runtime features ──
   updateCartBadges();
-  window.addEventListener('storage', updateCartBadges);
+  // Same-tab cart changes (this tab): dispatched by cart-utils on every write.
+  window.addEventListener(CART_UPDATED_EVENT, updateCartBadges);
+  // Cross-tab cart changes (other tabs): native storage event, cart key only.
+  window.addEventListener('storage', (e) => {
+    if (!e.key || e.key === 'cart') updateCartBadges();
+  });
   initSearch(nav);
 }
