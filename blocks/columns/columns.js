@@ -58,6 +58,59 @@ function decorateThankYou(block) {
 }
 
 /**
+ * `form-right` variant — contact page.
+ * Authored rows:
+ *   [Contact Information col, first contact-method col]
+ *   [contact-method col] · ... (middle rows, one card each)
+ *   [Send us a message col]   (last row — will hold the nested contact-form block)
+ *
+ * Left = intro content + stacked contact-method cards.
+ * Right = the form intro column, preserved as authored (a future contact-form
+ * block nested in that cell renders itself independently).
+ */
+function decorateFormRight(block) {
+  const rows = [...block.children];
+  if (rows.length < 2) return;
+
+  const firstRow = rows[0];
+  const lastRow = rows[rows.length - 1];
+  const middleRows = rows.slice(1, -1);
+
+  const firstRowCols = [...firstRow.children];
+  const content = firstRowCols.shift();
+  const cardCols = [...firstRowCols, ...middleRows.flatMap((row) => [...row.children])];
+  const formIntroCols = [...lastRow.children];
+
+  const grid = document.createElement('div');
+  grid.className = 'columns-form-right-grid';
+
+  const left = document.createElement('div');
+  left.className = 'columns-form-left';
+  if (content) {
+    content.classList.add('columns-form-content');
+    left.append(content);
+  }
+
+  const cardsWrap = document.createElement('div');
+  cardsWrap.className = 'columns-form-cards';
+  cardCols.forEach((col) => {
+    col.classList.add('columns-form-card');
+    cardsWrap.append(col);
+  });
+  left.append(cardsWrap);
+
+  const right = document.createElement('div');
+  right.className = 'columns-form-right-col';
+  formIntroCols.forEach((col) => {
+    col.classList.add('columns-form-content');
+    right.append(col);
+  });
+
+  grid.append(left, right);
+  block.replaceChildren(grid);
+}
+
+/**
  * Extracts a search query from a Google Maps URL.
  * Handles formats like:
  *   - https://maps.google.com/?q=address+text
@@ -82,6 +135,11 @@ function extractMapQuery(url) {
 export default function decorate(block) {
   if (block.classList.contains('thank-you')) {
     decorateThankYou(block);
+    return;
+  }
+
+  if (block.classList.contains('form-right')) {
+    decorateFormRight(block);
     return;
   }
 

@@ -155,7 +155,7 @@ function decorateWishlist(block, rows, small) {
 
   const header = document.createElement('div');
   header.className = 'product-list-wishlist-header';
-  header.innerHTML = `<h2 class="product-list-heading">${headingHTML}<span class="product-list-wishlist-count"></span></h2>
+  header.innerHTML = `<h1 class="product-list-heading">${headingHTML}<span class="product-list-wishlist-count"></span></h1>
     <button class="product-list-clear-btn" type="button">Clear All</button>`;
   block.append(header);
 

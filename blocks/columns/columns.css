@@ -261,3 +261,97 @@
     max-width: 100%;
   }
 }
+
+/* ══════════════════════════════════════════════════════════
+   FORM-RIGHT VARIANT (contact page)
+   Left: "Contact Information" intro + stacked contact-method cards.
+   Right: "Send us a message" intro (a nested contact-form block
+   authored in that cell renders itself independently).
+   ══════════════════════════════════════════════════════════ */
+
+/* Rows are regrouped in JS into a single grid — overrides base row flex */
+.columns.form-right > .columns-form-right-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+}
+
+.columns-form-left {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.columns-form-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.columns-form-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: var(--space-4);
+  row-gap: var(--space-1);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5) var(--space-6);
+}
+
+.columns-form-card p {
+  margin: 0;
+}
+
+/* Icon cell — spans the title/value/description rows */
+.columns-form-card p:first-child {
+  grid-column: 1;
+  grid-row: 1 / span 3;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-accent-subtle);
+  color: var(--color-accent);
+  border-radius: var(--radius-lg);
+}
+
+.columns-form-card p:first-child .icon,
+.columns-form-card p:first-child .icon img {
+  width: 20px;
+  height: 20px;
+}
+
+.columns-form-card p:nth-child(2) {
+  grid-column: 2;
+  grid-row: 1;
+  font-family: var(--font-heading);
+  font-weight: var(--weight-bold);
+  color: var(--color-text);
+}
+
+.columns-form-card p:nth-child(3) {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.columns-form-card p:last-child {
+  grid-column: 2;
+  grid-row: 3;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+@media (width >= 900px) {
+  .columns.form-right > .columns-form-right-grid {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--space-16);
+  }
+
+  .columns-form-left,
+  .columns-form-right-col {
+    flex: 1;
+  }
+}

@@ -334,3 +334,67 @@
     gap: var(--space-6);
   }
 }
+
+/* ── Company-Stats Variant ──
+   Used for the statistics grid (e.g. "Happy Customers", "Products Shipped").
+   Each li has 2 cells: stat value | label. No image, no card chrome —
+   matches the legacy dark stats band. Background goes on the section
+   container (like hero-pages) so it bleeds full width instead of being
+   inset inside the content max-width.
+*/
+.cards-container:has(.cards.company-stats) {
+  background: var(--color-primary);
+  padding: var(--space-16) 0;
+}
+
+.cards.company-stats > ul {
+  grid-template-columns: repeat(1, 1fr);
+  gap: var(--space-8);
+  text-align: center;
+}
+
+@media (width >= 600px) {
+  .cards.company-stats > ul {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (width >= 900px) {
+  .cards.company-stats > ul {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.cards.company-stats > ul > li {
+  background: none;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: 0;
+}
+
+.cards.company-stats > ul > li:hover {
+  transform: none;
+}
+
+.cards.company-stats .cards-card-body {
+  /* Base .cards-card-body padding is for image/text cards — stats have none */
+  padding: 0;
+}
+
+.cards.company-stats .cards-card-body:first-child p {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: var(--weight-normal);
+  color: var(--color-accent);
+  line-height: 1;
+  margin: 0;
+}
+
+.cards.company-stats .cards-card-body:last-child p {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: rgb(249 250 248 / 70%);
+  margin: 0;
+}

@@ -832,7 +832,7 @@
 
   .pd-gallery {
     position: sticky;
-    top: calc(var(--nav-height) + var(--space-4));
+    top: 10px;
   }
 
   .pd-main-img-wrap {

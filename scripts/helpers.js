@@ -81,3 +81,28 @@ export function displayValue(value) {
     ? `<span>${esc(value)}</span>`
     : '<span class="value-empty">Not provided</span>';
 }
+
+/**
+ * Compute a 1-2 letter avatar initials string for a user.
+ * Single source of truth for header + account-page avatars.
+ * @param {{name?: string, phone?: string}|null|undefined} user
+ * @returns {string}
+ */
+export function getInitials(user) {
+  return (user?.name || user?.phone || '?')
+    .split(' ')
+    .map((w) => w[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
+}
+
+/**
+ * Resolve the display name for a user (falls back to phone, then a default).
+ * @param {{name?: string, phone?: string}|null|undefined} user
+ * @param {string} fallback
+ * @returns {string}
+ */
+export function getDisplayName(user, fallback = 'Account') {
+  return user?.name || user?.phone || fallback;
+}

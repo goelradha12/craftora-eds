@@ -3,6 +3,7 @@ import { loadFragment } from '../fragment/fragment.js';
 import { updateCartBadges, CART_UPDATED_EVENT, esc } from '../../scripts/cart-utils.js';
 import { getUser, logout } from '../../scripts/auth.js';
 import { fetchProducts, normalizeProduct } from '../../scripts/product-data.js';
+import { getInitials, getDisplayName } from '../../scripts/helpers.js';
 
 /**
  * Craftora Header Block
@@ -92,9 +93,8 @@ function createProfileHTML(user) {
   if (!user) {
     return '<a class="nav__btn-solid" href="/login">Sign In</a>';
   }
-  const initials = (user.name || user.phone || '?').split(' ').map((w) => w[0]).join('').slice(0, 2)
-    .toUpperCase();
-  const name = esc((user.name || user.phone || 'Account').split(' ')[0]);
+  const initials = getInitials(user);
+  const name = esc(getDisplayName(user).split(' ')[0]);
   return `<div class="nav__dropdown" id="profileDropdown">
     <button class="nav__dropdown-trigger" aria-haspopup="true" aria-expanded="false">
       <span class="nav__avatar">${initials}</span>
@@ -303,7 +303,7 @@ export default async function decorate(block) {
     <ul class="nav__drawer-list">
       ${[...navLinks].map((a) => `<li><a class="nav--link" href="${a.href}">${esc(a.textContent)}</a></li>`).join('')}
       <li>${user
-    ? `<button class="nav__drawer-profile-btn">Hi, ${esc((user.name || user.phone || 'Account').split(' ')[0])} ${ICON.chevron}</button>
+    ? `<button class="nav__drawer-profile-btn">Hi, ${esc(getDisplayName(user).split(' ')[0])} ${ICON.chevron}</button>
            <ul class="nav__drawer-submenu" hidden>
              <li><a href="/account">My Account</a></li>
              <li><a href="/account#my-orders">My Orders</a></li>

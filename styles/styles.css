@@ -32,6 +32,9 @@
   --color-error-border: hsl(0 80% 88%);
   --color-warning: #d97706;
   --color-warning-light: #fef3c7;
+  --color-wish: #e11d48;
+  --color-wish-light: #fff0f3;
+  --color-wish-hover: #fecdd3;
 
   /* ── Surfaces ── */
   --color-surface: #ffffff;
