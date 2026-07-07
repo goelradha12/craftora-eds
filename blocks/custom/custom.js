@@ -408,7 +408,10 @@ export default function decorate(block) {
     const dot = $('#status-dot');
     const txt = $('#status-msg');
     if (txt) txt.textContent = msg;
-    if (dot) dot.className = type === 'success' ? 'active' : type === 'warning' ? 'warning' : '';
+    if (dot) {
+      const dotClass = { success: 'active', warning: 'warning' }[type] || '';
+      dot.className = dotClass;
+    }
   }
 
   let toastTimer;
@@ -486,7 +489,10 @@ export default function decorate(block) {
     const wrap = $('#preset-swatches');
     if (!wrap) return;
     wrap.innerHTML = '';
-    if (!state._colorInitialized) { state.shirtColor = DEFAULT_COLOR; state._colorInitialized = true; }
+    if (!state._colorInitialized) {
+      state.shirtColor = DEFAULT_COLOR;
+      state._colorInitialized = true;
+    }
     PALETTE_KEYS.forEach((key) => {
       const hex = colorPalette[key];
       const b = document.createElement('button');
@@ -602,8 +608,10 @@ export default function decorate(block) {
     clearUploadUI(true);
     const s = stageSize();
     const size = Math.min(s.w, s.h) * 0.55;
+    const layerId = state.nid;
+    state.nid += 1;
     const layer = {
-      id: state.nid++,
+      id: layerId,
       type: 'image',
       _uploaded: false,
       x: Math.round((s.w - size) / 2),
@@ -645,8 +653,8 @@ export default function decorate(block) {
       const svgH = Math.max(totalH + fs * 0.7, 40);
       const startY = (svgH - totalH) / 2 + fs * 0.78;
       const svgLines = lines.map((line, i) => {
-        const ax = ta === 'left' ? 4 : ta === 'right' ? lw - 4 : lw / 2;
-        const anchor = ta === 'left' ? 'start' : ta === 'right' ? 'end' : 'middle';
+        const ax = { left: 4, right: lw - 4 }[ta] ?? lw / 2;
+        const anchor = { left: 'start', right: 'end' }[ta] ?? 'middle';
         return `<text x="${ax}" y="${startY + i * lineH}" text-anchor="${anchor}" fill="${col}" font-size="${fs}" font-weight="${fw}" font-family="${ff}">${esc(line)}</text>`;
       }).join('');
       return `<svg xmlns="http://www.w3.org/2000/svg" width="${lw}" height="${svgH}" viewBox="0 0 ${lw} ${svgH}">${svgLines}</svg>`;
@@ -658,7 +666,7 @@ export default function decorate(block) {
     const sagitta = radius - radius * Math.cos(halfAngle);
     const svgH = Math.max(sagitta + fs * 2.0, fs * 2.4);
     const svgW = lw;
-    const pid = `cp${layer.id}_${(Math.random() * 1e6) | 0}`;
+    const pid = `cp${layer.id}_${Math.floor(Math.random() * 1e6)}`;
     let pathD;
     if (curve > 0) {
       const cx = svgW / 2;
@@ -828,7 +836,8 @@ export default function decorate(block) {
   function addTextLayer() {
     markDirty();
     const s = stageSize();
-    const id = state.nid++;
+    const id = state.nid;
+    state.nid += 1;
     const layer = {
       id,
       type: 'text',
@@ -853,7 +862,11 @@ export default function decorate(block) {
   function removeSel(fallback) {
     const idx = layers().findIndex((l) => l.id === state.sel);
     if (idx < 0) {
-      setStatus(fallback === 'text' ? 'No text layer selected.' : fallback === 'design' ? 'No design layer selected.' : 'No layer selected.', 'warning');
+      const noSelectionMsg = {
+        text: 'No text layer selected.',
+        design: 'No design layer selected.',
+      }[fallback] || 'No layer selected.';
+      setStatus(noSelectionMsg, 'warning');
       return;
     }
     const removed = layers()[idx];
@@ -958,14 +971,23 @@ export default function decorate(block) {
     const cfg = getCfg();
     const s = stageSize();
     const canvas = $('#snapshot-canvas');
-    canvas.width = s.w; canvas.height = s.h;
+    canvas.width = s.w;
+    canvas.height = s.h;
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, s.w, s.h);
-    await drawSvgStringToCanvas(ctx, productShapeSvg(cfg.productShape, s.w, s.h, state.shirtColor), 0, 0, s.w, s.h);
-    for (const layer of (state[state.side] || [])) {
-      if (layer.type === 'image') await drawImageLayerToCanvas(ctx, layer);
-      else if (layer.type === 'text') await drawSvgStringToCanvas(ctx, makeCurvedTextSVG(layer), layer.x, layer.y, layer.w, null);
-    }
+    const productSvg = productShapeSvg(cfg.productShape, s.w, s.h, state.shirtColor);
+    await drawSvgStringToCanvas(ctx, productSvg, 0, 0, s.w, s.h);
+    // Layers must draw in order (later layers stack on top of earlier ones),
+    // so chain them sequentially rather than looping with await inside.
+    await (state[state.side] || []).reduce(async (prev, layer) => {
+      await prev;
+      if (layer.type === 'image') return drawImageLayerToCanvas(ctx, layer);
+      if (layer.type === 'text') {
+        const svg = makeCurvedTextSVG(layer);
+        return drawSvgStringToCanvas(ctx, svg, layer.x, layer.y, layer.w, null);
+      }
+      return undefined;
+    }, Promise.resolve());
     return canvas.toDataURL('image/png');
   }
 
@@ -979,7 +1001,7 @@ export default function decorate(block) {
           if (h === null) {
             const nW = img.naturalWidth || img.width || w;
             const nH = img.naturalHeight || img.height || w;
-            const drawH = nW > 0 ? (w * nH / nW) : nH;
+            const drawH = nW > 0 ? (w * nH) / nW : nH;
             ctx.drawImage(img, x, y, w, drawH);
           } else {
             ctx.drawImage(img, x, y, w, h);
@@ -1018,7 +1040,13 @@ export default function decorate(block) {
       };
       if (l.type === 'text') {
         Object.assign(o, {
-          text: l.text, fontFamily: l.fontFamily, fontWeight: l.fontWeight, fontSize: l.fontSize, textColor: l.textColor, textAlign: l.textAlign, curve: l.curve,
+          text: l.text,
+          fontFamily: l.fontFamily,
+          fontWeight: l.fontWeight,
+          fontSize: l.fontSize,
+          textColor: l.textColor,
+          textAlign: l.textAlign,
+          curve: l.curve,
         });
       }
       if (l.type === 'image') o.src = l.src;
@@ -1174,8 +1202,10 @@ export default function decorate(block) {
     state.sel = null;
     const s = stageSize();
     const size = Math.min(s.w, s.h) * 0.55;
+    const layerId = state.nid;
+    state.nid += 1;
     const layer = {
-      id: state.nid++,
+      id: layerId,
       type: 'image',
       _uploaded: true,
       x: Math.round((s.w - size) / 2),
@@ -1208,17 +1238,29 @@ export default function decorate(block) {
     reader.onload = (ev) => {
       const dataUrl = ev.target.result;
       const testImg = new Image();
-      testImg.onload = () => { hideUploadLoading(); showUploadPreview(file.name, dataUrl); placeOnCanvas(dataUrl, file.name); };
-      testImg.onerror = () => { hideUploadLoading(); showUploadError('Corrupted file', 'This image could not be processed. Please try another file.'); };
+      testImg.onload = () => {
+        hideUploadLoading();
+        showUploadPreview(file.name, dataUrl);
+        placeOnCanvas(dataUrl, file.name);
+      };
+      testImg.onerror = () => {
+        hideUploadLoading();
+        showUploadError('Corrupted file', 'This image could not be processed. Please try another file.');
+      };
       testImg.src = dataUrl;
     };
-    reader.onerror = () => { hideUploadLoading(); showUploadError('Upload failed', 'Upload failed. Please try again.'); };
+    reader.onerror = () => {
+      hideUploadLoading();
+      showUploadError('Upload failed', 'Upload failed. Please try again.');
+    };
     reader.readAsDataURL(file);
   }
 
   if (uploadEls.area && uploadEls.input) {
     uploadEls.area.addEventListener('click', (e) => {
-      if (uploadEls.remove && (e.target === uploadEls.remove || uploadEls.remove.contains(e.target))) return;
+      const onRemoveBtn = uploadEls.remove
+        && (e.target === uploadEls.remove || uploadEls.remove.contains(e.target));
+      if (onRemoveBtn) return;
       if (uploadEls.preview.style.display !== 'none') return;
       uploadEls.input.click();
     });
@@ -1273,7 +1315,8 @@ export default function decorate(block) {
   /* ── Purchase panel ── */
   function getDesignFee(category) {
     if (!category) return 0;
-    const key = Object.keys(DESIGN_FEES).find((k) => k.toLowerCase() === String(category).toLowerCase());
+    const categoryLower = String(category).toLowerCase();
+    const key = Object.keys(DESIGN_FEES).find((k) => k.toLowerCase() === categoryLower);
     return key ? DESIGN_FEES[key] : 0;
   }
   let csQty = 1;
@@ -1308,8 +1351,18 @@ export default function decorate(block) {
     }
   }
 
-  $('#cs-qty-minus')?.addEventListener('click', () => { if (csQty > 1) { csQty--; $('#cs-qty-val').textContent = csQty; updatePurchasePanel(); } });
-  $('#cs-qty-plus')?.addEventListener('click', () => { if (csQty < 99) { csQty++; $('#cs-qty-val').textContent = csQty; updatePurchasePanel(); } });
+  $('#cs-qty-minus')?.addEventListener('click', () => {
+    if (csQty <= 1) return;
+    csQty -= 1;
+    $('#cs-qty-val').textContent = csQty;
+    updatePurchasePanel();
+  });
+  $('#cs-qty-plus')?.addEventListener('click', () => {
+    if (csQty >= 99) return;
+    csQty += 1;
+    $('#cs-qty-val').textContent = csQty;
+    updatePurchasePanel();
+  });
 
   $('#cs-add-to-cart')?.addEventListener('click', async () => {
     const p = state.product;
@@ -1335,7 +1388,10 @@ export default function decorate(block) {
     }
     let hash = 0;
     const cs = JSON.stringify(hashData);
-    for (let i = 0; i < cs.length; i++) { hash = ((hash << 5) - hash) + cs.charCodeAt(i); hash |= 0; }
+    for (let i = 0; i < cs.length; i += 1) {
+      // eslint-disable-next-line no-bitwise
+      hash = (((hash << 5) - hash) + cs.charCodeAt(i)) | 0;
+    }
     const uniqueKey = `${p.id}__${selectedSize}__${selectedColor}__${hash}`;
 
     const cart = getCart();
@@ -1345,6 +1401,7 @@ export default function decorate(block) {
       existing.customization = customization;
       existing.image = cartImage;
     } else {
+      const colorKey = getColorKey(selectedColor);
       cart.push({
         key: uniqueKey,
         id: p.id,
@@ -1355,7 +1412,7 @@ export default function decorate(block) {
         designFee: fee,
         price: totalPrice,
         color: selectedColor,
-        colorName: (() => { const k = getColorKey(selectedColor); return k ? formatColorName(k) : selectedColor; })(),
+        colorName: colorKey ? formatColorName(colorKey) : selectedColor,
         size: selectedSize,
         qty: csQty,
         customized: true,

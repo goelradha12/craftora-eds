@@ -134,10 +134,10 @@ export default function decorate(block) {
   const btnLabel = rows[2]?.querySelector('p')?.textContent?.trim()
     || (isSignup ? 'Create Account' : 'Sign In');
   const switchPara = rows[3]?.querySelector('p');
-  const switchHTML = switchPara ? switchPara.innerHTML
-    : (isSignup
-      ? 'Already have an account? <strong><a href="/login">Sign in here</a></strong>'
-      : "Don't have an account? <strong><a href=\"/signup\">Sign up here</a></strong>");
+  const defaultSwitchHTML = isSignup
+    ? 'Already have an account? <strong><a href="/login">Sign in here</a></strong>'
+    : "Don't have an account? <strong><a href=\"/signup\">Sign up here</a></strong>";
+  const switchHTML = switchPara ? switchPara.innerHTML : defaultSwitchHTML;
 
   // Build image panel
   const imagePanel = document.createElement('div');

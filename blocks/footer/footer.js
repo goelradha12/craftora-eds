@@ -163,7 +163,7 @@ function decorateBrandColumn(col) {
   if (contentParagraphs.length > 2) {
     const address = document.createElement('address');
     address.className = 'footer-address';
-    for (let i = 2; i < contentParagraphs.length; i++) {
+    for (let i = 2; i < contentParagraphs.length; i += 1) {
       address.append(contentParagraphs[i]);
     }
     col.append(address);

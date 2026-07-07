@@ -29,7 +29,12 @@ function getColorName(hex) {
 
 /* ── State ── */
 const state = {
-  product: null, products: [], qty: 1, customization: null, designRequired: false, selectedColor: null,
+  product: null,
+  products: [],
+  qty: 1,
+  customization: null,
+  designRequired: false,
+  selectedColor: null,
 };
 
 function loadCustomization(id) {
@@ -108,11 +113,17 @@ export default async function decorate(block) {
   }
 }
 
+/* Normalizes a sheet field that may arrive as a "A, B, C" string or an array. */
+function toArray(value) {
+  if (!value) return [];
+  return typeof value === 'string' ? value.split(', ') : value;
+}
+
 /* ── Render full page ── */
 function renderPage(p) {
   const images = [resolveAssetPath(p.imageDefault || p.images?.default), ...(p.imageOthers ? p.imageOthers.split(', ').map(resolveAssetPath) : (p.images?.others || []).map(resolveAssetPath))].filter(Boolean);
-  const badges = p.badges ? (typeof p.badges === 'string' ? p.badges.split(', ') : p.badges) : [];
-  const sizes = p.sizes ? (typeof p.sizes === 'string' ? p.sizes.split(', ') : p.sizes) : [];
+  const badges = toArray(p.badges);
+  const sizes = toArray(p.sizes);
   const isSaved = isWishlisted(p.id);
   const designFee = getDesignFee(p.category);
   const outOfStock = Number(p.stock) <= 0;
@@ -237,7 +248,11 @@ function updateUI(block) {
   }
 
   const outOfStock = Number(p.stock) <= 0;
-  if (outOfStock) { if (addBtn) addBtn.disabled = true; if (buyBtn) buyBtn.disabled = true; return; }
+  if (outOfStock) {
+    if (addBtn) addBtn.disabled = true;
+    if (buyBtn) buyBtn.disabled = true;
+    return;
+  }
   if (state.designRequired) {
     const has = !!state.customization;
     if (addBtn) addBtn.disabled = !has;
@@ -314,12 +329,14 @@ function bindEvents(block) {
   const qtyVal = block.querySelector('#pdQtyVal');
   block.querySelector('#pdQtyMinus')?.addEventListener('click', () => {
     if (state.qty <= 1) return;
-    qtyVal.textContent = --state.qty;
+    state.qty -= 1;
+    qtyVal.textContent = state.qty;
     block.querySelector('#pdQtyMinus').disabled = state.qty <= 1;
   });
   block.querySelector('#pdQtyPlus')?.addEventListener('click', () => {
     if (state.qty >= 99) return;
-    qtyVal.textContent = ++state.qty;
+    state.qty += 1;
+    qtyVal.textContent = state.qty;
     block.querySelector('#pdQtyMinus').disabled = false;
   });
 

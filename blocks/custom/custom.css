@@ -329,7 +329,6 @@
   width: 100%;
   height: 4px;
   appearance: none;
-  appearance: none;
   background: var(--surface-3);
   border-radius: 999px;
   outline: none;
@@ -544,7 +543,7 @@
   font-size: 11px;
   color: #b91c1c;
   line-height: 1.45;
-  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .custom-app .upload-error.visible { display: flex; }
@@ -1135,10 +1134,6 @@
 main > .section {
   padding: 0;
   margin: 0;
-}
-
-main > .section >.custom-wrapper {
-  padding: 0;
 }
 
 main > .section > .custom-wrapper {

@@ -15,7 +15,6 @@ export default function decorate(block) {
 
   // Extract Heading Row
   const headerRow = rows[0];
-  const eyebrowText = headerRow.children[0]?.textContent?.trim() || '';
   const headingContent = headerRow.children[1];
 
   // Extract QA Rows
