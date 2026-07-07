@@ -11,17 +11,17 @@ footer .footer.block {
 }
 
 .footer-container {
-    padding: var(--space-20) var(--content-padding);
+    padding: var(--space-12) var(--content-padding);
     max-width: calc(var(--content-width) + 2 * var(--content-padding));
     margin: 0 auto;
     position: relative;
 }
 
-/* ── Top Section (Grid) ── */
+/* ── Top Section (Grid) — mobile-first: 2 columns, brand spans full width ── */
 .footer.block .footer-top {
     display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr 1fr;
-    gap: var(--space-10);
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-8);
     max-width: calc(var(--content-width) + 2 * var(--content-padding));
     margin: 0 auto;
     padding-inline: var(--content-padding);
@@ -29,9 +29,10 @@ footer .footer.block {
     border-bottom: 1px solid rgb(249 250 248 / 0.1);
 }
 
-/* ── Brand Column ── */
+/* ── Brand Column — spans full width until desktop ── */
 .footer.block .footer-brand {
     min-width: 0;
+    grid-column: 1 / -1;
 }
 
 .footer.block .footer-logo {
@@ -91,18 +92,23 @@ footer .footer.block {
 }
 
 .footer.block .footer-socials a {
-    color: rgb(249 250 248 / 0.6);
-    transition: color var(--transition-base), transform var(--transition-base);
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    opacity: 0.6;
+    transition: opacity var(--transition-base), transform var(--transition-base);
 }
 
 .footer.block .footer-socials a:hover,
 .footer.block .footer-socials a:focus-visible {
-    color: var(--color-accent);
+    opacity: 1;
     transform: translateY(-2px);
     text-decoration: none;
+}
+
+.footer.block .footer-socials .icon img {
+    width: 20px;
+    height: 20px;
 }
 
 /* ── Links Columns ── */
@@ -124,7 +130,7 @@ footer .footer.block {
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
+    gap: var(--space-2);
     margin: 0;
 }
 
@@ -146,15 +152,15 @@ footer .footer.block {
     text-decoration: none;
 }
 
-/* ── Bottom Section (Copyright & Legal) ── */
+/* ── Bottom Section (Copyright & Legal) — mobile-first: stacked ── */
 .footer.block .footer-bottom {
     max-width: calc(var(--content-width) + 2 * var(--content-padding));
     margin: var(--space-10) auto 0;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     flex-wrap: wrap;
-    gap: var(--space-4);
+    gap: var(--space-3);
     padding: 0 var(--content-padding);
 }
 
@@ -166,43 +172,42 @@ footer .footer.block {
 
 .footer.block .footer-bottom-links {
     display: flex;
-    gap: var(--space-6);
+    gap: var(--space-4);
     flex-wrap: wrap;
 }
 
-
 /* ══════════════════════════════════════════════════════════
-   RESPONSIVE (Mobile layout)
+   RESPONSIVE (Desktop layout) — mobile-first, override at 900px
 ══════════════════════════════════════════════════════════ */
 
-@media (max-width: 768px) {
+@media (width >= 900px) {
     .footer-container {
-        padding-block: var(--space-12);
+        padding-block: var(--space-20);
     }
 
-    /* Convert 4 columns to 2 columns on tablet/mobile */
+    /* Expand 2 columns to 4 columns on desktop */
     .footer.block .footer-top {
-        grid-template-columns: 1fr 1fr;
-        gap: var(--space-8);
+        grid-template-columns: 1.5fr 1fr 1fr 1fr;
+        gap: var(--space-10);
     }
 
-    /* Make the brand column span full width on mobile */
     .footer.block .footer-brand {
-        grid-column: 1 / -1;
+        grid-column: auto;
     }
 
     .footer.block .footer-links ul {
-        gap: var(--space-2);
-    }
-
-    /* Stack bottom copyright and links vertically */
-    .footer.block .footer-bottom {
-        flex-direction: column;
-        align-items: flex-start;
         gap: var(--space-3);
     }
 
-    .footer.block .footer-bottom-links {
+    /* Copyright and legal links side by side */
+    .footer.block .footer-bottom {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
         gap: var(--space-4);
+    }
+
+    .footer.block .footer-bottom-links {
+        gap: var(--space-6);
     }
 }

@@ -1,5 +1,6 @@
 import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
+import { getUser } from '../../scripts/auth.js';
 
 export default async function decorate(block) {
   const footerMeta = getMetadata('footer');
@@ -109,59 +110,77 @@ export default async function decorate(block) {
     footer.append(bottomBar);
   }
 
+  // Logged in: hide Sign In/Sign Up, show My Orders instead (legacy layout.js behavior)
+  if (getUser()) {
+    const signInLink = footer.querySelector('a[href="/login"]');
+    const accountList = signInLink?.closest('ul');
+    footer.querySelectorAll('a[href="/login"], a[href="/signup"]')
+      .forEach((a) => a.closest('li')?.remove());
+
+    if (accountList) {
+      [['/account', 'My Account'], ['/account#my-orders', 'My Orders']].reverse().forEach(([href, label]) => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = href;
+        a.textContent = label;
+        li.append(a);
+        accountList.prepend(li);
+      });
+    }
+  }
+
   block.append(footer);
 }
 
 /**
- * Decorates the brand column to match the original layout HTML structure
+ * Decorates the brand column to match the original layout HTML structure.
+ * Social links are authored in DA Live as icon-shorthand paragraphs, e.g.
+ * ":instagram: [Instagram](https://instagram.com/craftora)" — decorateIcons()
+ * (run earlier via decorateMain on the fragment) turns ":instagram:" into
+ * <span class="icon icon-instagram"><img></span> alongside the link.
  */
 function decorateBrandColumn(col) {
   const paragraphs = [...col.querySelectorAll('p')];
+  const socialParagraphs = paragraphs.filter((p) => p.querySelector('a') && p.querySelector('.icon'));
+  const contentParagraphs = paragraphs.filter((p) => !socialParagraphs.includes(p));
 
   // P1: Logo (Wrap picture in anchor tag)
-  if (paragraphs[0] && paragraphs[0].querySelector('picture')) {
+  if (contentParagraphs[0] && contentParagraphs[0].querySelector('picture')) {
     const a = document.createElement('a');
     a.href = '/';
     a.setAttribute('aria-label', 'Craftora Home');
     a.className = 'footer-logo';
-    col.replaceChild(a, paragraphs[0]);
-    a.append(paragraphs[0].querySelector('picture'));
+    col.replaceChild(a, contentParagraphs[0]);
+    a.append(contentParagraphs[0].querySelector('picture'));
   }
 
   // P2: Tagline
-  if (paragraphs[1]) {
-    paragraphs[1].className = 'footer-tagline';
+  if (contentParagraphs[1]) {
+    contentParagraphs[1].className = 'footer-tagline';
   }
 
   // P3+: Address
-  if (paragraphs.length > 2) {
+  if (contentParagraphs.length > 2) {
     const address = document.createElement('address');
     address.className = 'footer-address';
-    for (let i = 2; i < paragraphs.length; i++) {
-      address.append(paragraphs[i]);
+    for (let i = 2; i < contentParagraphs.length; i++) {
+      address.append(contentParagraphs[i]);
     }
     col.append(address);
   }
 
-  // Inject Hardcoded Socials
-  const socials = document.createElement('div');
-  socials.className = 'footer-socials';
-  socials.innerHTML = `
-    <a href="#" aria-label="Instagram">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-    </a>
-    <a href="#" aria-label="Facebook">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
-    </a>
-    <a href="#" aria-label="X (Twitter)">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4l11.733 16h4.267l-11.733 -16z"/><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"/></svg>
-    </a>
-    <a href="#" aria-label="Pinterest">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="12" x2="12" y2="22"></line><path d="M12 2a8 8 0 0 0-8 8c0 2.8 1.5 5.2 3.8 6.5"></path><path d="M8 16.5c1.5-3.5 3-7 3-7"></path><path d="M11 9.5a2.5 2.5 0 0 1 5 0c0 3.5-2 6.5-5 6.5-1.5 0-2.5-1-2.5-2.5"></path></svg>
-    </a>
-    <a href="#" aria-label="YouTube">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
-    </a>
-  `;
-  col.append(socials);
+  // Social links: use the authored link + icon directly, no JS-generated hrefs
+  if (socialParagraphs.length) {
+    const socials = document.createElement('div');
+    socials.className = 'footer-socials';
+    socialParagraphs.forEach((p) => {
+      const a = p.querySelector('a');
+      const icon = p.querySelector('.icon');
+      a.setAttribute('aria-label', a.textContent.trim());
+      a.textContent = '';
+      a.append(icon);
+      socials.append(a);
+    });
+    col.append(socials);
+  }
 }

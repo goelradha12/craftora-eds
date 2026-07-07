@@ -52,8 +52,6 @@
 }
 
 .cart-item-img-wrap {
-  width: 96px;
-  height: 96px;
   flex-shrink: 0;
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -348,7 +346,6 @@
   }
 
   .cart-item-img-wrap {
-    width: 120px;
     height: 120px;
   }
 
@@ -356,5 +353,53 @@
     padding: var(--space-8);
     position: sticky;
     top: calc(var(--nav-height) + var(--space-4));
+  }
+}
+
+/* ── Small mobile: image pinned left, content in a grid column, actions
+   span full width below with a divider, remove button floats top-right ── */
+@media (width < 600px) {
+  .cart-item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: var(--space-3) var(--space-4);
+    align-items: start;
+  }
+
+  .cart-item-details {
+    display: contents;
+  }
+
+  .cart-item-header {
+    grid-column: 2;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+
+  .cart-item-price {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+  }
+
+  .cart-item-actions {
+    grid-column: 1 / -1;
+    margin-top: var(--space-1);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border-light);
+  }
+
+  .cart-item-controls {
+    flex: 1;
+    justify-content: space-between;
+  }
+
+  .cart-item-remove {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: none;
+    border-color: transparent;
   }
 }

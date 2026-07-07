@@ -15,17 +15,15 @@ main > .section.auth-container > .auth-wrapper {
   margin: 0;
 }
 
-/* ── Page layout ── */
+/* ── Page layout — mobile-first: edge-to-edge, no card chrome ── */
 .auth {
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   min-height: 100vh;
-  padding: var(--space-10) var(--space-4);
-  background:
-    url('/assets/backgrounds/background_login.avif') center bottom / contain no-repeat,
-    url('/assets/backgrounds/texture-dot.png') top left / 12px repeat var(--color-surface-warm);
+  padding: 0;
+  background: var(--color-surface);
 }
 
 /* ── Left image panel (hidden by default, shown on desktop) ── */
@@ -41,13 +39,13 @@ main > .section.auth-container > .auth-wrapper {
   flex-direction: column;
   gap: var(--space-3);
   width: 100%;
-  max-width: 540px;
-  max-height: calc(100dvh - var(--space-12));
-  overflow-y: auto;
-  padding: var(--space-10);
+  max-width: 100%;
+  max-height: none;
+  overflow-y: visible;
+  padding: var(--space-8) var(--space-5);
   background: var(--color-surface);
-  border-radius: var(--radius-2xl);
-  border: 1px solid var(--color-border);
+  border-radius: 0;
+  border: none;
 }
 
 /* ── Logo ── */
@@ -272,32 +270,33 @@ main > .section.auth-container > .auth-wrapper {
    RESPONSIVE
 ══════════════════════════════════════════════════════════ */
 
-@media (max-width: 768px) {
+@media (width >= 600px) {
   .auth {
     padding: var(--space-6) var(--space-4);
-    align-items: flex-start;
     padding-top: var(--space-8);
+    background:
+      url('/assets/backgrounds/background_login.avif') center bottom / contain no-repeat,
+      url('/assets/backgrounds/texture-dot.png') top left / 12px repeat var(--color-surface-warm);
   }
 
   .auth .auth-form {
-    max-width: 100%;
     padding: var(--space-8) var(--space-6);
-    max-height: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-2xl);
   }
 }
 
-@media (max-width: 520px) {
+@media (width >= 900px) {
   .auth {
-    padding: 0;
-    background: var(--color-surface);
+    align-items: center;
+    padding: var(--space-10) var(--space-4);
   }
 
   .auth .auth-form {
-    border: none;
-    border-radius: 0;
-    padding: var(--space-8) var(--space-5);
-    max-height: none;
-    overflow-y: visible;
+    max-width: 540px;
+    max-height: calc(100dvh - var(--space-12));
+    overflow-y: auto;
+    padding: var(--space-10);
   }
 }
 
@@ -305,16 +304,16 @@ main > .section.auth-container > .auth-wrapper {
    SIGNUP VARIANT — additional styles
    ══════════════════════════════════════════════════════════ */
 
-/* Two-column field row (password + confirm side by side) */
+/* Single column on mobile; two-column (password + confirm) from tablet up */
 .auth.signup .auth-field-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: var(--space-4);
 }
 
-@media (width < 520px) {
+@media (width >= 600px) {
   .auth.signup .auth-field-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 }
 

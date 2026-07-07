@@ -3,7 +3,7 @@ import { loadFragment } from '../fragment/fragment.js';
 import { updateCartBadges, CART_UPDATED_EVENT, esc } from '../../scripts/cart-utils.js';
 import { getUser, logout } from '../../scripts/auth.js';
 import { fetchProducts, normalizeProduct } from '../../scripts/product-data.js';
-import { getInitials, getDisplayName } from '../../scripts/helpers.js';
+import { getInitials, getDisplayName, parseIconMenu } from '../../scripts/helpers.js';
 
 /**
  * Craftora Header Block
@@ -88,8 +88,21 @@ function initSearch(nav) {
   });
 }
 
+/* ── Profile menu item renderer (shared by desktop dropdown + mobile drawer) ──
+   Authored items whose href is empty/"#" (e.g. "Sign Out") render as a
+   .nav__logout-btn action instead of a navigation link. */
+function profileMenuItemsHTML(menuItems) {
+  return menuItems.map((item, i) => {
+    const isAction = !item.href || item.href === '#';
+    const tag = isAction ? 'button' : 'a';
+    const attrs = isAction ? 'class="nav__logout-btn"' : `href="${esc(item.href)}"`;
+    const divider = isAction && i > 0 ? '<li class="nav__dropdown-divider"></li>' : '';
+    return `${divider}<li><${tag} ${attrs} role="menuitem">${item.iconHTML}<span>${esc(item.label)}</span></${tag}></li>`;
+  }).join('');
+}
+
 /* ── Profile dropdown builder ── */
-function createProfileHTML(user) {
+function createProfileHTML(user, menuItems) {
   if (!user) {
     return '<a class="nav__btn-solid" href="/login">Sign In</a>';
   }
@@ -102,12 +115,7 @@ function createProfileHTML(user) {
       ${ICON.chevron}
     </button>
     <ul class="nav__dropdown-menu" role="menu">
-      <li><a href="/account" role="menuitem">My Account</a></li>
-      <li><a href="/account#my-orders" role="menuitem">My Orders</a></li>
-      <li><a href="/wishlist" role="menuitem">Wishlist</a></li>
-      <li><a href="/cart" role="menuitem">Cart</a></li>
-      <li class="nav__dropdown-divider"></li>
-      <li><button class="nav__logout-btn" role="menuitem">Sign Out</button></li>
+      ${profileMenuItemsHTML(menuItems)}
     </ul>
   </div>`;
 }
@@ -144,6 +152,12 @@ export default async function decorate(block) {
   // ── Extract nav links from second section ──
   const linksSection = sections[1];
   const navLinks = linksSection?.querySelectorAll('a') || [];
+
+  // ── Extract profile dropdown menu items from third section ──
+  // Authored as a <ul> of "Label" links, each with a nested :iconname: icon
+  // (decorateIcons() already ran on this fragment via decorateMain).
+  const profileMenuSection = sections[2];
+  const profileMenuItems = parseIconMenu(profileMenuSection);
 
   // ═══════════════════════════════════════════════════
   // BUILD DESKTOP NAV
@@ -194,7 +208,7 @@ export default async function decorate(block) {
   // Profile/Auth
   const user = getUser();
   const authWrap = document.createElement('div');
-  authWrap.innerHTML = createProfileHTML(user);
+  authWrap.innerHTML = createProfileHTML(user, profileMenuItems);
   actions.append(authWrap.firstElementChild || authWrap);
 
   // Wishlist
@@ -305,11 +319,7 @@ export default async function decorate(block) {
       <li>${user
     ? `<button class="nav__drawer-profile-btn">Hi, ${esc(getDisplayName(user).split(' ')[0])} ${ICON.chevron}</button>
            <ul class="nav__drawer-submenu" hidden>
-             <li><a href="/account">My Account</a></li>
-             <li><a href="/account#my-orders">My Orders</a></li>
-             <li><a href="/wishlist">Wishlist</a></li>
-             <li><a href="/cart">Cart</a></li>
-             <li><button class="nav__logout-btn">Sign Out</button></li>
+             ${profileMenuItemsHTML(profileMenuItems)}
            </ul>`
     : '<a class="nav--link" href="/login">Sign In</a>'}</li>
     </ul>`;

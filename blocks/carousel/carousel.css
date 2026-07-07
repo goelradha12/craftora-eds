@@ -276,7 +276,7 @@
    RESPONSIVE
    ══════════════════════════════════════════════════════════ */
 
-@media (width < 960px) {
+@media (width < 900px) {
   .carousel-card {
     flex: 0 0 calc(50% - var(--space-3));
   }

@@ -527,8 +527,11 @@ export default function decorate(block) {
     if (!stage || !svg) return;
     const areaEl = $('#canvas-stage-area');
     if (areaEl) {
-      const aW = areaEl.clientWidth - 64;
-      const aH = areaEl.clientHeight - 64;
+      const areaStyle = getComputedStyle(areaEl);
+      const padX = parseFloat(areaStyle.paddingLeft) + parseFloat(areaStyle.paddingRight);
+      const padY = parseFloat(areaStyle.paddingTop) + parseFloat(areaStyle.paddingBottom);
+      const aW = areaEl.clientWidth - padX;
+      const aH = areaEl.clientHeight - padY;
       const scale = Math.min(1, aW / cfg.stageW, aH / cfg.stageH);
       stage.style.width = `${cfg.stageW}px`;
       stage.style.height = `${cfg.stageH}px`;
@@ -1064,6 +1067,10 @@ export default function decorate(block) {
   }
 
   function observeResize() {
+    // Mobile browsers resize the visual viewport as the address bar/toolbar
+    // shows or hides, which can leave the first renderStage() measurement
+    // (taken while the toolbar is still expanded) stale.
+    window.visualViewport?.addEventListener('resize', () => renderStage());
     if (!window.ResizeObserver) return;
     const area = $('#canvas-stage-area');
     if (!area) return;

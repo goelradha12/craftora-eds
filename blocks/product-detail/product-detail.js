@@ -113,6 +113,11 @@ function renderPage(p) {
   const designFee = getDesignFee(p.category);
   const outOfStock = Number(p.stock) <= 0;
   const details = Array.isArray(p.productDetails) ? p.productDetails : [];
+  const shippingBody = '<ul class="pd-shipping-list">'
+    + '<li>Standard orders ship in 3–5 business days.</li>'
+    + '<li>Customized products require approximately 5 additional business days.</li>'
+    + '<li>Returns are accepted within 7 days for non-customized products only.</li>'
+    + '</ul>';
 
   return `
     <nav class="pd-breadcrumb" aria-label="Breadcrumb">
@@ -130,41 +135,54 @@ function renderPage(p) {
         ${images.length > 1 ? `<div class="pd-thumbs">${images.map((src, i) => `<button class="pd-thumb ${i === 0 ? 'active' : ''}" data-src="${src}" type="button" aria-label="Image ${i + 1}"><img src="${src}" alt="" width="64" height="64" loading="lazy"></button>`).join('')}</div>` : ''}
       </div>
       <div class="pd-info">
-        <span class="pd-category">${esc(p.category)}</span>
-        <h1 class="pd-name">${esc(p.name)}</h1>
-        <div class="pd-pricing">
-          <span class="pd-price" id="pdPrice">${money(p.basePrice)}</span>
-          <span class="pd-price-note" id="pdPriceNote">base price</span>
-        </div>
-        <div class="pd-fee-breakdown" id="pdFee" hidden>
-          <span>Base: ${money(p.basePrice)}</span>
-          <span class="pd-fee-accent">+ Design fee: ${money(designFee)}</span>
+        <div class="pd-meta">
+          <span class="pd-category">${esc(p.category)}</span>
+          <h1 class="pd-name">${esc(p.name)}</h1>
+          <p class="pd-desc">${esc(p.description)}</p>
         </div>
         <hr>
-        <p class="pd-desc">${esc(p.description)}</p>
+        <div class="pd-pricing">
+          <span class="pd-price" id="pdPrice">${money(p.basePrice)}</span>
+          <span class="pd-base-label">BASE PRICE</span>
+          <span class="pd-fee-pill">+ ${money(designFee)} Custom Design</span>
+        </div>
+        <hr>
         ${renderColorPicker()}
         <div class="pd-options-row">
           ${sizes.length ? `<fieldset class="pd-option"><legend class="pd-option-label">Size</legend><div class="pd-sizes">${sizes.map((s, i) => `<label class="pd-size-label"><input type="radio" name="pd-size" value="${esc(s)}" ${i === 0 ? 'checked' : ''}><span class="pd-size-btn">${esc(s)}</span></label>`).join('')}</div></fieldset>` : ''}
           <div class="pd-option"><span class="pd-option-label">Quantity</span><div class="pd-qty"><button class="pd-qty-btn" id="pdQtyMinus" type="button" disabled>−</button><output class="pd-qty-val" id="pdQtyVal">1</output><button class="pd-qty-btn" id="pdQtyPlus" type="button">+</button></div></div>
         </div>
-        <div class="pd-design-toggle"><span class="pd-option-label">Custom Design?</span><div class="pd-design-radios"><label><input type="radio" name="pd-design" value="no" checked ${outOfStock ? 'disabled' : ''}><span>No</span></label><label><input type="radio" name="pd-design" value="yes" ${outOfStock ? 'disabled' : ''}><span>Yes, customize</span></label></div></div>
-        <div class="pd-cust-card missing" id="pdCustCard" hidden>
-          <div class="pd-cust-preview-wrap">
-            <img id="pdCustPreview" alt="Saved design preview" hidden>
-            <span class="pd-cust-icon" id="pdCustIcon">🎨</span>
+        <div class="pd-cust-section">
+          <div class="pd-cust-header">
+            <div class="pd-cust-heading">
+              <span class="pd-base-label">Apply Custom Design</span>
+            </div>
+            <label class="pd-toggle">
+              <input type="checkbox" id="pdDesignToggle" ${outOfStock ? 'disabled' : ''}>
+              <span class="pd-toggle-slider"></span>
+            </label>
           </div>
-          <div class="pd-cust-text">
-            <p class="pd-cust-title" id="pdCustTitle">Design required</p>
-            <p class="pd-cust-desc" id="pdCustDesc">Open the studio and save your design.</p>
-            <button class="pd-view-design-btn" id="pdViewDesignBtn" type="button" hidden>View design</button>
+          <div class="pd-cust-card missing" id="pdCustCard" hidden>
+            <div class="pd-cust-preview-wrap">
+              <img id="pdCustPreview" alt="Saved design preview" hidden>
+              <span class="pd-cust-icon" id="pdCustIcon">🎨</span>
+            </div>
+            <div class="pd-cust-text">
+              <p class="pd-cust-status" id="pdCustStatus">NO DESIGN SELECTED</p>
+              <div class="pd-cust-title-row">
+                <p class="pd-cust-title" id="pdCustTitle">Design required</p>
+              </div>
+              <p class="pd-cust-desc" id="pdCustDesc">Create your design to personalize this product.</p>
+              <button class="pd-view-design-btn" id="pdViewDesignBtn" type="button" hidden><span>View design</span> <span class="pd-view-design-chevron">&rsaquo;</span></button>
+            </div>
+            <button class="pd-cust-edit-link" id="pdCustomizeBtn" ${outOfStock ? 'disabled' : ''} type="button"><svg class="pd-cust-edit-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> <span id="pdCustBtnLabel">CREATE</span></button>
           </div>
         </div>
         <div class="pd-actions">
-          <button class="pd-customize-btn" id="pdCustomizeBtn" ${outOfStock ? 'disabled' : ''} hidden><span id="pdCustBtnLabel">Open Design Studio</span></button>
           <div class="pd-btn-row"><button class="pd-add-btn" id="pdAddBtn" ${outOfStock ? 'disabled' : ''}>Add to Cart</button><button class="pd-buy-btn" id="pdBuyBtn" ${outOfStock ? 'disabled' : ''}>Buy Now</button></div>
         </div>
-        <div class="pd-trust"><span>🚚 Free Shipping</span><span>↩️ Easy Returns</span><span>🔒 Secure Payment</span></div>
-        ${details.length ? renderDetails(details) : ''}
+        ${details.length ? renderAccordion('pdDetailsToggle', 'pdDetailsBody', 'Product Details', renderDetailsBody(details)) : ''}
+        ${renderAccordion('pdShippingToggle', 'pdShippingBody', 'Shipping & Returns', shippingBody)}
       </div>
     </section>`;
 }
@@ -182,8 +200,12 @@ function renderColorPicker() {
     </div></div>`;
 }
 
-function renderDetails(details) {
-  return `<div class="pd-details"><button class="pd-details-toggle" id="pdDetailsToggle" type="button" aria-expanded="true"><span>Product Details</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button><dl class="pd-details-list" id="pdDetailsBody">${details.map((d) => `<div class="pd-details-row"><dt>${esc(d.label || d.key || '')}</dt><dd>${esc(d.value || '')}</dd></div>`).join('')}</dl></div>`;
+function renderDetailsBody(details) {
+  return `<dl class="pd-details-dl">${details.map((d) => `<div class="pd-details-row"><dt>${esc(d.label || d.key || '')}</dt><dd>${esc(d.value || '')}</dd></div>`).join('')}</dl>`;
+}
+
+function renderAccordion(toggleId, bodyId, title, bodyHtml) {
+  return `<div class="pd-details"><button class="pd-details-toggle" id="${toggleId}" type="button" aria-expanded="true"><span>${esc(title)}</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button><div class="pd-details-list" id="${bodyId}">${bodyHtml}</div></div>`;
 }
 
 function renderError(msg) {
@@ -195,25 +217,19 @@ function updateUI(block) {
   const p = state.product;
   if (!p) return;
   const total = calculateItemPrice(Number(p.basePrice), p.category, state.designRequired);
-  const priceEl = block.querySelector('#pdPrice');
-  const noteEl = block.querySelector('#pdPriceNote');
-  const feeEl = block.querySelector('#pdFee');
   const custCard = block.querySelector('#pdCustCard');
-  const custBtn = block.querySelector('#pdCustomizeBtn');
   const addBtn = block.querySelector('#pdAddBtn');
   const buyBtn = block.querySelector('#pdBuyBtn');
+  const toggle = block.querySelector('#pdDesignToggle');
 
-  if (priceEl) priceEl.textContent = money(total);
+  if (toggle) toggle.checked = state.designRequired;
+  if (addBtn) addBtn.textContent = `Add to Cart • ${money(total)}`;
+  if (buyBtn) buyBtn.textContent = `Buy Now • ${money(total)}`;
+
   if (state.designRequired) {
-    if (noteEl) noteEl.textContent = 'incl. design fee';
-    if (feeEl) feeEl.hidden = false;
     if (custCard) { custCard.hidden = false; updateCustCard(block); }
-    if (custBtn) custBtn.hidden = false;
-  } else {
-    if (noteEl) noteEl.textContent = 'base price';
-    if (feeEl) feeEl.hidden = true;
-    if (custCard) custCard.hidden = true;
-    if (custBtn) custBtn.hidden = true;
+  } else if (custCard) {
+    custCard.hidden = true;
   }
 
   const outOfStock = Number(p.stock) <= 0;
@@ -235,6 +251,7 @@ function updateCustCard(block) {
   const card = block.querySelector('#pdCustCard');
   const icon = block.querySelector('#pdCustIcon');
   const preview = block.querySelector('#pdCustPreview');
+  const status = block.querySelector('#pdCustStatus');
   const title = block.querySelector('#pdCustTitle');
   const desc = block.querySelector('#pdCustDesc');
   const label = block.querySelector('#pdCustBtnLabel');
@@ -255,20 +272,24 @@ function updateCustCard(block) {
   if (outOfStock) {
     card.className = 'pd-cust-card missing';
     if (icon) icon.textContent = '✗';
+    if (status) status.textContent = 'OUT OF STOCK';
     if (title) title.textContent = 'Out of stock';
     if (desc) desc.textContent = 'This product is currently unavailable.';
+    if (label) label.textContent = 'CREATE';
   } else if (has) {
     card.className = 'pd-cust-card ready';
     if (icon) icon.textContent = '✓';
-    if (title) title.textContent = 'Design saved — ready to order';
+    if (status) status.textContent = 'Active Customization';
+    if (title) title.textContent = '';
     if (desc) desc.textContent = `Color: ${getColorName(state.customization?.shirtColor)}`;
-    if (label) label.textContent = 'Edit Design';
+    if (label) label.textContent = 'EDIT';
   } else {
     card.className = 'pd-cust-card missing';
     if (icon) icon.textContent = '🎨';
+    if (status) status.textContent = 'NO DESIGN SELECTED';
     if (title) title.textContent = 'Design required';
-    if (desc) desc.textContent = 'Open the studio and save your design.';
-    if (label) label.textContent = 'Open Design Studio';
+    if (desc) desc.textContent = 'Create your design to personalize this product.';
+    if (label) label.textContent = 'CREATE';
   }
 }
 
@@ -331,8 +352,9 @@ function bindEvents(block) {
   block.querySelector('#pdViewDesignBtn')?.addEventListener('click', () => showDesignPreview(p.id));
 
   // Design toggle
-  block.querySelectorAll('input[name="pd-design"]').forEach((r) => {
-    r.addEventListener('change', () => { state.designRequired = r.value === 'yes'; updateUI(block); });
+  block.querySelector('#pdDesignToggle')?.addEventListener('change', (e) => {
+    state.designRequired = e.target.checked;
+    updateUI(block);
   });
 
   // Customize button
@@ -341,12 +363,14 @@ function bindEvents(block) {
     window.location.href = `/customize?id=${p.id}&size=${encodeURIComponent(size)}`;
   });
 
-  // Details toggle
-  block.querySelector('#pdDetailsToggle')?.addEventListener('click', () => {
-    const body = block.querySelector('#pdDetailsBody');
-    const expanded = block.querySelector('#pdDetailsToggle').getAttribute('aria-expanded') === 'true';
-    block.querySelector('#pdDetailsToggle').setAttribute('aria-expanded', String(!expanded));
-    body.hidden = expanded;
+  // Accordion toggles (Product Details, Shipping & Returns)
+  block.querySelectorAll('.pd-details-toggle').forEach((toggle) => {
+    toggle.addEventListener('click', () => {
+      const body = toggle.nextElementSibling;
+      const expanded = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!expanded));
+      if (body) body.hidden = expanded;
+    });
   });
 
   // Add to Cart / Buy Now
@@ -357,7 +381,7 @@ function bindEvents(block) {
   // (pageshow / bfcache), and on the studio's in-tab save event.
   const syncDesign = () => {
     state.customization = loadCustomization(p.id);
-    if (state.customization) { state.designRequired = true; setDesignRadio(block, true); }
+    if (state.customization) state.designRequired = true;
     updateUI(block);
   };
   window.addEventListener('storage', (e) => { if (e.key === `designData_${p.id}`) syncDesign(); });
@@ -365,10 +389,6 @@ function bindEvents(block) {
   window.addEventListener('craftora-design-updated', (e) => {
     if (e.detail?.productId === p.id) syncDesign();
   });
-}
-
-function setDesignRadio(block, yes) {
-  block.querySelectorAll('input[name="pd-design"]').forEach((r) => { r.checked = r.value === (yes ? 'yes' : 'no'); });
 }
 
 function handleAddToCart(block, redirect) {

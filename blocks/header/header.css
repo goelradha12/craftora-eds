@@ -366,6 +366,14 @@ header .nav__dropdown-menu button:hover {
   color: var(--color-accent);
 }
 
+header .nav__dropdown-menu .icon,
+header .nav__drawer-submenu .icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+}
+
 header .nav__dropdown-divider {
   height: 1px;
   background: var(--color-border);
@@ -555,7 +563,9 @@ header .nav__drawer-submenu {
 
 header .nav__drawer-submenu a,
 header .nav__drawer-submenu button {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
   width: 100%;
   padding: var(--space-3) var(--space-6) var(--space-3) var(--space-10);
   font-size: var(--text-sm);

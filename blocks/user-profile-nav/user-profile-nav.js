@@ -19,28 +19,9 @@
 import { decorateIcons } from '../../scripts/aem.js';
 import { getUser, logout } from '../../scripts/auth.js';
 import {
-  esc, formatDate, formatAddress, displayValue, getInitials, getDisplayName,
+  esc, formatDate, formatAddress, displayValue, getInitials, getDisplayName, parseIconMenu,
 } from '../../scripts/helpers.js';
 import { getOrdersForUser, money } from '../../scripts/cart-utils.js';
-
-/* Parse the authored menu list into { label, href, iconHTML } items. */
-function parseMenu(block) {
-  const list = block.querySelector('ul');
-  if (!list) return [];
-  return [...list.children].map((li) => {
-    const link = li.querySelector('a');
-    const iconHTML = li.querySelector('.icon')?.outerHTML || '';
-    let label;
-    if (link) {
-      label = link.textContent.trim();
-    } else {
-      const clone = li.cloneNode(true);
-      clone.querySelectorAll('ul').forEach((u) => u.remove());
-      label = clone.textContent.trim();
-    }
-    return { label, href: link?.getAttribute('href') || '', iconHTML };
-  }).filter((it) => it.label);
-}
 
 function rowText(row) {
   return row ? row.textContent.trim() : '';
@@ -156,7 +137,7 @@ export default function decorate(block) {
   const rows = [...block.children];
   const infoHeading = rowText(rows[3]) || 'Personal Information';
   const ordersHeading = rowText(rows[4]) || 'My Orders';
-  const items = parseMenu(block);
+  const items = parseIconMenu(block);
   const user = getUser();
 
   block.textContent = '';

@@ -315,6 +315,11 @@
   border-radius: var(--radius-full);
 }
 
+/* Static like legacy .process-grid — no image zoom on hover for this variant */
+.cards.image-content.round > ul > li:not(:first-child):hover img {
+  transform: none;
+}
+
 .cards.image-content.round > ul > li:not(:first-child) .cards-card-body {
   padding: 0;
   text-align: center;

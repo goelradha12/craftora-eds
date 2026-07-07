@@ -19,6 +19,7 @@
   flex-wrap: wrap;
   gap: var(--space-2);
   margin-bottom: var(--space-8);
+
 }
 
 .product-list-filter-btn {
@@ -209,11 +210,8 @@
   }
 
   .product-list-filters {
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    padding-bottom: var(--space-2);
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
   .product-list-filters::-webkit-scrollbar {
@@ -273,7 +271,7 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: var(--space-4);
-  margin-bottom: var(--space-8);
+  margin-block: var(--space-8);
 }
 
 .product-list-wishlist-header .product-list-heading {
@@ -281,8 +279,10 @@
   align-items: center;
   gap: var(--space-2);
   margin: 0;
+}
+
+.product-list-wishlist-header .product-list-heading p {
   font-size: var(--text-2xl);
-  font-weight: var(--weight-extrabold);
 }
 
 .product-list-wishlist-header .icon,

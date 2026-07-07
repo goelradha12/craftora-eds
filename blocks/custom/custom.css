@@ -42,7 +42,7 @@
 .custom-app {
   --topbar-h: 56px;
   --statusbar-h: 38px;
-  height: min(860px, calc(100vh - 120px));
+  height: 100vh;
   min-height: 600px;
   display: grid;
   grid-template-columns: 350px 1fr;
@@ -900,7 +900,7 @@
 
 .custom-app .cart-modal-arrow { display: none; }
 
-@media (max-width: 860px) {
+@media (max-width: 900px) {
   .custom-app .cart-modal-arrow { display: inline-block; }
 }
 
@@ -1005,6 +1005,9 @@
 
 @media (max-width: 600px) {
   .custom-app .purchase-float { display: none; }
+  main > div {
+    margin: 0;
+  }
 }
 
 /* ── Purchase drawer ── */
@@ -1084,7 +1087,7 @@
 .custom-app .cs-qty-val { font-size: 14px; font-weight: 700; min-width: 28px; text-align: center; color: var(--ink); }
 
 /* ── Responsive ── */
-@media (max-width: 860px) {
+@media (max-width: 900px) {
   .custom-app {
     display: flex;
     flex-direction: column;
@@ -1095,7 +1098,7 @@
   .custom-app #product-name { max-width: 100px; font-size: 13px; }
   .custom-app .topbar-badge { display: none; }
 
-  .custom-app #canvas-wrap { height: 45vh; flex-shrink: 0; border-bottom: 1px solid var(--border); order: 1; }
+  .custom-app #canvas-wrap { height: 45vh; height: 45dvh; flex-shrink: 0; border-bottom: 1px solid var(--border); order: 1; }
   .custom-app #sidebar { flex: 1; max-height: unset; border-right: none; order: 2; padding-bottom: 20px; }
 
   .custom-app #save-bar { display: none; }

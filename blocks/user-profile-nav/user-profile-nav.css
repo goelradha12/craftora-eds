@@ -20,17 +20,10 @@
 }
 
 .user-profile-card {
-  max-width: 340px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   overflow: hidden;
-}
-
-@media (width >= 900px) {
-  .user-profile-card {
-    max-width: none;
-  }
 }
 
 /* ── Header (avatar + identity) ── */

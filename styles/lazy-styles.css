@@ -67,3 +67,59 @@
 .toast[data-variant="success"]::before { background: var(--color-success); }
 .toast[data-variant="error"]::before { background: var(--color-error); }
 .toast[data-variant="warning"]::before { background: var(--color-warning); }
+
+/* ============================================================
+   SCROLL TO TOP
+   ============================================================ */
+
+.scroll-to-top {
+  position: fixed;
+  right: var(--space-4);
+  bottom: var(--space-4);
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: var(--color-text-on-dark);
+  box-shadow: var(--shadow-lg);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity var(--transition-base), transform var(--transition-base), background var(--transition-base);
+}
+
+.scroll-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.scroll-to-top:hover {
+  background: var(--color-primary-light);
+}
+
+.scroll-to-top:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-to-top {
+    transition: opacity var(--transition-base);
+  }
+}
+
+@media (width < 480px) {
+  .scroll-to-top {
+    right: var(--space-3);
+    bottom: var(--space-3);
+    width: 40px;
+    height: 40px;
+  }
+}
