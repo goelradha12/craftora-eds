@@ -445,7 +445,7 @@ header .nav__mobile-search-close:hover { color: var(--color-text); }
 header .nav__overlay {
   position: fixed;
   inset: 0;
-  background: rgb(17 24 39 / 0.42);
+  background: rgb(17 24 39 / 42%);
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--transition-base);

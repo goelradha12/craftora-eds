@@ -7,7 +7,9 @@
  * Reads ?id= URL param, fetches product data, renders full PDP.
  */
 
-import { money, esc, addToCart, setCheckoutSession } from '../../scripts/cart-utils.js';
+import {
+  money, esc, addToCart, setCheckoutSession,
+} from '../../scripts/cart-utils.js';
 import { getUser } from '../../scripts/auth.js';
 import { getDesignFee, calculateItemPrice } from '../../scripts/pricing.js';
 import { toggleWishlist, isWishlisted } from '../../scripts/wishlist-utils.js';
@@ -26,7 +28,9 @@ function getColorName(hex) {
 }
 
 /* ── State ── */
-const state = { product: null, products: [], qty: 1, customization: null, designRequired: false, selectedColor: null };
+const state = {
+  product: null, products: [], qty: 1, customization: null, designRequired: false, selectedColor: null,
+};
 
 function loadCustomization(id) {
   try {
@@ -94,7 +98,7 @@ export default async function decorate(block) {
     document.title = `${p.name} — Craftora`;
     state.customization = loadCustomization(productId);
     state.selectedColor = state.customization?.shirtColor || COLORS[PALETTE_KEYS[0]];
-    state.designRequired = !!state.customization;
+    state.designRequired = true;
 
     block.innerHTML = renderPage(p);
     bindEvents(block);
@@ -321,7 +325,9 @@ function bindEvents(block) {
 
   // Wishlist
   block.querySelector('#pdWishBtn')?.addEventListener('click', () => {
-    const now = toggleWishlist({ id: p.id, name: p.name, category: p.category, price: Number(p.basePrice), image: resolveAssetPath(p.imageDefault || p.images?.default || '') });
+    const now = toggleWishlist({
+      id: p.id, name: p.name, category: p.category, price: Number(p.basePrice), image: resolveAssetPath(p.imageDefault || p.images?.default || ''),
+    });
     const btn = block.querySelector('#pdWishBtn');
     btn.classList.toggle('wishlisted', now);
     const svg = btn.querySelector('path');
@@ -406,11 +412,20 @@ function handleAddToCart(block, redirect) {
     : `${p.id}__${size}__${color}__plain`;
 
   const item = {
-    key, id: p.id, name: p.name,
+    key,
+    id: p.id,
+    name: p.name,
     image: (state.designRequired && state.customization?.previewImage) ? state.customization.previewImage : resolveAssetPath(p.imageDefault || p.images?.default || ''),
-    category: p.category, basePrice: Number(p.basePrice), designFee, price: totalPrice,
-    color, colorName, size, qty: state.qty,
-    customized: state.designRequired, designRequired: state.designRequired,
+    category: p.category,
+    basePrice: Number(p.basePrice),
+    designFee,
+    price: totalPrice,
+    color,
+    colorName,
+    size,
+    qty: state.qty,
+    customized: state.designRequired,
+    designRequired: state.designRequired,
     customization: state.designRequired ? state.customization : null,
   };
 

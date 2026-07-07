@@ -30,14 +30,26 @@ const PALETTE_KEYS = Object.keys(colorPalette);
 const DEFAULT_COLOR = colorPalette[PALETTE_KEYS[0]];
 
 const CATEGORY_CONFIG = {
-  tshirt: { label: 'T-Shirt', sides: ['front', 'back'], defaultSide: 'front', stageW: 300, stageH: 340, productShape: 'shirt', showColor: true },
-  diary: { label: 'Diary', sides: ['front', 'back'], defaultSide: 'front', stageW: 300, stageH: 360, productShape: 'rectBook', showColor: true },
-  bottle: { label: 'Bottle', sides: ['wrap'], defaultSide: 'wrap', stageW: 280, stageH: 360, productShape: 'rectLabel', showColor: true },
-  cup: { label: 'Cup', sides: ['wrap'], defaultSide: 'wrap', stageW: 280, stageH: 240, productShape: 'rectLabel', showColor: true },
-  default: { label: 'Product', sides: ['wrap'], defaultSide: 'wrap', stageW: 280, stageH: 320, productShape: 'rectLabel', showColor: true },
+  tshirt: {
+    label: 'T-Shirt', sides: ['front', 'back'], defaultSide: 'front', stageW: 300, stageH: 340, productShape: 'shirt', showColor: true,
+  },
+  diary: {
+    label: 'Diary', sides: ['front', 'back'], defaultSide: 'front', stageW: 300, stageH: 360, productShape: 'rectBook', showColor: true,
+  },
+  bottle: {
+    label: 'Bottle', sides: ['wrap'], defaultSide: 'wrap', stageW: 280, stageH: 360, productShape: 'rectLabel', showColor: true,
+  },
+  cup: {
+    label: 'Cup', sides: ['wrap'], defaultSide: 'wrap', stageW: 280, stageH: 240, productShape: 'rectLabel', showColor: true,
+  },
+  default: {
+    label: 'Product', sides: ['wrap'], defaultSide: 'wrap', stageW: 280, stageH: 320, productShape: 'rectLabel', showColor: true,
+  },
 };
 
-const DESIGN_FEES = { Tshirt: 199, Diary: 149, Bottle: 149, Cup: 99 };
+const DESIGN_FEES = {
+  Tshirt: 199, Diary: 149, Bottle: 149, Cup: 99,
+};
 const MAX_UPLOAD_BYTES = 50 * 1024; // 50 KB
 const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
 const FORMAT_LABEL = 'JPG, PNG, or WEBP';
@@ -377,7 +389,9 @@ export default function decorate(block) {
     category: 'default',
     side: 'front',
     shirtColor: DEFAULT_COLOR,
-    front: [], back: [], wrap: [],
+    front: [],
+    back: [],
+    wrap: [],
     sel: null,
     nid: 1,
     saved: true,
@@ -589,9 +603,15 @@ export default function decorate(block) {
     const s = stageSize();
     const size = Math.min(s.w, s.h) * 0.55;
     const layer = {
-      id: state.nid++, type: 'image', _uploaded: false,
-      x: Math.round((s.w - size) / 2), y: Math.round((s.h - size) / 2),
-      w: size, h: size, src: tpl.file, name: tpl.name || 'Template',
+      id: state.nid++,
+      type: 'image',
+      _uploaded: false,
+      x: Math.round((s.w - size) / 2),
+      y: Math.round((s.h - size) / 2),
+      w: size,
+      h: size,
+      src: tpl.file,
+      name: tpl.name || 'Template',
     };
     layers().push(layer);
     renderAll();
@@ -739,8 +759,7 @@ export default function decorate(block) {
   function selectLayer(id) {
     state.sel = id;
     const layer = layers().find((l) => l.id === id);
-    if (layer && layer.type === 'text') { populateTextControls(layer); openPanel('text'); }
-    else if (layer && layer.type === 'image') { openPanel('design'); }
+    if (layer && layer.type === 'text') { populateTextControls(layer); openPanel('text'); } else if (layer && layer.type === 'image') { openPanel('design'); }
     renderAll();
     setStatus(layer ? `${layer.type === 'text' ? 'Text' : 'Design'} layer selected — drag to move, corner to resize.` : '', 'idle');
   }
@@ -811,9 +830,12 @@ export default function decorate(block) {
     const s = stageSize();
     const id = state.nid++;
     const layer = {
-      id, type: 'text',
-      x: Math.round(s.w * 0.2), y: Math.round(s.h * 0.4),
-      w: parseInt($('#txt-width').value, 10) || 160, h: 64,
+      id,
+      type: 'text',
+      x: Math.round(s.w * 0.2),
+      y: Math.round(s.h * 0.4),
+      w: parseInt($('#txt-width').value, 10) || 160,
+      h: 64,
       text: $('#txt-content').value || 'YOUR TEXT',
       fontFamily: $('#txt-font').value,
       fontWeight: $('#txt-weight').value,
@@ -890,7 +912,8 @@ export default function decorate(block) {
   }
 
   function setupDrag(el, layer) {
-    let sx, sy, ox, oy;
+    let sx; let sy; let ox; let
+      oy;
     el.addEventListener('pointerdown', (e) => {
       if (e.target.closest('.resize-handle')) return;
       e.preventDefault();
@@ -911,7 +934,8 @@ export default function decorate(block) {
   }
 
   function setupResize(rh, layer) {
-    let sx, sy, ow, oh;
+    let sx; let sy; let ow; let
+      oh;
     rh.addEventListener('pointerdown', (e) => {
       e.preventDefault(); e.stopPropagation();
       sx = e.clientX; sy = e.clientY; ow = layer.w; oh = layer.h;
@@ -989,8 +1013,14 @@ export default function decorate(block) {
 
   function serializeLayers(ls) {
     return ls.map((l) => {
-      const o = { id: l.id, type: l.type, x: l.x, y: l.y, w: l.w, h: l.h, _uploaded: l._uploaded || false };
-      if (l.type === 'text') Object.assign(o, { text: l.text, fontFamily: l.fontFamily, fontWeight: l.fontWeight, fontSize: l.fontSize, textColor: l.textColor, textAlign: l.textAlign, curve: l.curve });
+      const o = {
+        id: l.id, type: l.type, x: l.x, y: l.y, w: l.w, h: l.h, _uploaded: l._uploaded || false,
+      };
+      if (l.type === 'text') {
+        Object.assign(o, {
+          text: l.text, fontFamily: l.fontFamily, fontWeight: l.fontWeight, fontSize: l.fontSize, textColor: l.textColor, textAlign: l.textAlign, curve: l.curve,
+        });
+      }
       if (l.type === 'image') o.src = l.src;
       return o;
     });
@@ -1079,10 +1109,17 @@ export default function decorate(block) {
 
   /* ── Upload handling ── */
   const uploadEls = {
-    area: $('#upload-area'), input: $('#img-upload'), idle: $('#upload-idle'),
-    loading: $('#upload-loading'), preview: $('#upload-preview'), thumb: $('#upload-thumb'),
-    name: $('#upload-name'), remove: $('#upload-remove'), error: $('#upload-error'),
-    errTitle: $('#upload-error-title'), errDetail: $('#upload-error-detail'),
+    area: $('#upload-area'),
+    input: $('#img-upload'),
+    idle: $('#upload-idle'),
+    loading: $('#upload-loading'),
+    preview: $('#upload-preview'),
+    thumb: $('#upload-thumb'),
+    name: $('#upload-name'),
+    remove: $('#upload-remove'),
+    error: $('#upload-error'),
+    errTitle: $('#upload-error-title'),
+    errDetail: $('#upload-error-detail'),
   };
 
   function showUploadLoading() {
@@ -1138,9 +1175,15 @@ export default function decorate(block) {
     const s = stageSize();
     const size = Math.min(s.w, s.h) * 0.55;
     const layer = {
-      id: state.nid++, type: 'image', _uploaded: true,
-      x: Math.round((s.w - size) / 2), y: Math.round((s.h - size) / 2),
-      w: size, h: size, src: dataUrl, name: filename || 'Uploaded image',
+      id: state.nid++,
+      type: 'image',
+      _uploaded: true,
+      x: Math.round((s.w - size) / 2),
+      y: Math.round((s.h - size) / 2),
+      w: size,
+      h: size,
+      src: dataUrl,
+      name: filename || 'Uploaded image',
     };
     layers().push(layer);
     renderAll();
@@ -1303,11 +1346,21 @@ export default function decorate(block) {
       existing.image = cartImage;
     } else {
       cart.push({
-        key: uniqueKey, id: p.id, name: p.name, image: cartImage, category: p.category,
-        basePrice: p.basePrice, designFee: fee, price: totalPrice,
+        key: uniqueKey,
+        id: p.id,
+        name: p.name,
+        image: cartImage,
+        category: p.category,
+        basePrice: p.basePrice,
+        designFee: fee,
+        price: totalPrice,
         color: selectedColor,
         colorName: (() => { const k = getColorKey(selectedColor); return k ? formatColorName(k) : selectedColor; })(),
-        size: selectedSize, qty: csQty, customized: true, designRequired: true, customization,
+        size: selectedSize,
+        qty: csQty,
+        customized: true,
+        designRequired: true,
+        customization,
       });
     }
     saveCart(cart);

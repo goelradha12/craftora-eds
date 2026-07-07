@@ -397,9 +397,13 @@ export default async function decorate(block) {
   MQ_DESKTOP.addEventListener('change', () => { if (MQ_DESKTOP.matches) closeMenu(); });
 
   // ── Mark active link ──
-  const currentPath = window.location.pathname;
+  // `link.href` resolves to an absolute URL (the source `a` came from a
+  // fetched fragment), so compare pathnames rather than the raw attribute
+  // against `location.pathname`, and ignore a trailing slash either side.
+  const normalizePath = (path) => path.replace(/\/$/, '') || '/';
+  const currentPath = normalizePath(window.location.pathname);
   nav.querySelectorAll('.nav--link').forEach((link) => {
-    if (link.getAttribute('href') === currentPath || link.getAttribute('href') === `${currentPath}/`) {
+    if (normalizePath(new URL(link.href, window.location.origin).pathname) === currentPath) {
       link.classList.add('active');
     }
   });

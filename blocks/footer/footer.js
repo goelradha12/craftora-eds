@@ -10,7 +10,7 @@ export default async function decorate(block) {
   if (!fragment) return;
 
   block.textContent = '';
-  
+
   // Create main container
   const footer = document.createElement('div');
   footer.className = 'footer-container';
@@ -40,7 +40,7 @@ export default async function decorate(block) {
           decorateBrandColumn(currentCol);
           topGrid.append(currentCol);
           foundFirstHeading = true;
-          
+
           currentCol = document.createElement('div');
           currentCol.className = 'footer-links';
           currentCol.append(child);
@@ -76,34 +76,34 @@ export default async function decorate(block) {
     const wrapper = bottomSection.querySelector('.default-content-wrapper');
     if (wrapper) {
       const paragraphs = wrapper.querySelectorAll('p');
-      
+
       // Copyright text
       if (paragraphs.length >= 1) {
-        bottomBar.append(paragraphs[0]); 
+        bottomBar.append(paragraphs[0]);
       }
-      
+
       // Legal Links (Split by '|')
       if (paragraphs.length >= 2) {
-         const linksDiv = document.createElement('div');
-         linksDiv.className = 'footer-bottom-links';
-         
-         const text = paragraphs[1].textContent;
-         const items = text.split('|').map(s => s.trim());
-         
-         // Map the text to actual URLs matching your layout
-         const linkMap = {
-           'Return Policy': '/return-policy',
-           'Privacy Policy': '/privacy-policy',
-           'Terms & Conditions': '/terms'
-         };
-         
-         items.forEach(item => {
-            const a = document.createElement('a');
-            a.href = linkMap[item] || '#';
-            a.textContent = item;
-            linksDiv.append(a);
-         });
-         bottomBar.append(linksDiv);
+        const linksDiv = document.createElement('div');
+        linksDiv.className = 'footer-bottom-links';
+
+        const text = paragraphs[1].textContent;
+        const items = text.split('|').map((s) => s.trim());
+
+        // Map the text to actual URLs matching your layout
+        const linkMap = {
+          'Return Policy': '/return-policy',
+          'Privacy Policy': '/privacy-policy',
+          'Terms & Conditions': '/terms',
+        };
+
+        items.forEach((item) => {
+          const a = document.createElement('a');
+          a.href = linkMap[item] || '#';
+          a.textContent = item;
+          linksDiv.append(a);
+        });
+        bottomBar.append(linksDiv);
       }
     }
 

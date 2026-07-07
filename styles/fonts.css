@@ -3,25 +3,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Inter:wght@400;500;600;700;800&family=Lato:wght@400;700&display=swap');
 
 /* ── Metric-matched fallbacks for CLS prevention ── */
+
 /* These mirror the fallback @font-face rules already in styles.css.
    Kept here too so fonts.css is self-contained if styles.css changes. */
 
 @font-face {
-  font-family: 'Inter-fallback';
+  font-family: Inter-fallback;
   size-adjust: 107%;
   ascent-override: 90%;
   src: local('Arial');
 }
 
 @font-face {
-  font-family: 'Lato-fallback';
+  font-family: Lato-fallback;
   size-adjust: 97.5%;
   ascent-override: 100%;
   src: local('Arial');
 }
 
 @font-face {
-  font-family: 'Fraunces-fallback';
+  font-family: Fraunces-fallback;
   size-adjust: 105%;
   ascent-override: 85%;
   src: local('Georgia');

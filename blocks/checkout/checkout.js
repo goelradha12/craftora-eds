@@ -103,6 +103,8 @@ const FIELD_SETS = {
       type: 'text',
       required: true,
       inputmode: 'numeric',
+      pattern: '\\d{6}',
+      maxlength: 6,
       autocomplete: 'postal-code',
       prefill: (u) => u?.addressObj?.pincode,
       validate: (v) => (/^\d{6}$/.test(v) ? '' : 'Enter a valid 6-digit PIN code.'),
@@ -142,12 +144,14 @@ function fieldHTML(section, def, user) {
   const id = `co-${section}-${def.field}`;
   const value = def.prefill ? (def.prefill(user) || '') : '';
   return `<div class="checkout-field">
-      <label for="${id}">${esc(def.label)}</label>
+      <label for="${id}"${def.required ? ' class="checkout-label-required"' : ''}>${esc(def.label)}</label>
       <input id="${id}" type="${def.type}" value="${esc(value)}"
         data-checkout-section="${section}" data-checkout-field="${def.field}"
         ${def.required ? 'required aria-required="true"' : ''}
         ${def.autocomplete ? `autocomplete="${def.autocomplete}"` : ''}
-        ${def.inputmode ? `inputmode="${def.inputmode}"` : ''}>
+        ${def.inputmode ? `inputmode="${def.inputmode}"` : ''}
+        ${def.pattern ? `pattern="${def.pattern}"` : ''}
+        ${def.maxlength ? `maxlength="${def.maxlength}"` : ''}>
       <span class="checkout-error" aria-live="polite"></span>
     </div>`;
 }
@@ -360,4 +364,19 @@ export default function decorate(block) {
   block.append(layout);
 
   block.querySelector('.checkout-place-btn')?.addEventListener('click', () => placeOrder(block, session));
+
+  // Live-filter the PIN code as the user types (submit-time regex validate() still applies).
+  const pincodeInput = block.querySelector('[data-checkout-field="pincode"]');
+  pincodeInput?.addEventListener('input', () => {
+    pincodeInput.value = pincodeInput.value.replace(/\D/g, '').slice(0, 6);
+  });
+
+  // Section icons load as external <img> files (decorateIcon()), so CSS
+  // `color` can't tint them. Recolor them orange for this page only via a
+  // CSS mask driven by each icon's own src — the shared /icons/*.svg files
+  // (reused elsewhere) stay untouched.
+  block.querySelectorAll('.checkout-section-head .icon').forEach((icon) => {
+    const src = icon.querySelector('img')?.src;
+    if (src) icon.style.setProperty('--icon-mask', `url("${src}")`);
+  });
 }

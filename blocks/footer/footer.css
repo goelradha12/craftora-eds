@@ -3,7 +3,9 @@
    ============================================================ */
 
 /* ── Full-width dark background ── */
+
 /* EDS renders: <footer><div class="footer block"> */
+
 /* JS creates: <div class="footer-container"> inside .footer.block */
 footer .footer.block {
     background: var(--color-primary);
@@ -26,7 +28,7 @@ footer .footer.block {
     margin: 0 auto;
     padding-inline: var(--content-padding);
     padding-bottom: var(--space-12);
-    border-bottom: 1px solid rgb(249 250 248 / 0.1);
+    border-bottom: 1px solid rgb(249 250 248 / 10%);
 }
 
 /* ── Brand Column — spans full width until desktop ── */
@@ -55,7 +57,7 @@ footer .footer.block {
 }
 
 .footer.block .footer-tagline {
-    color: rgb(249 250 248 / 0.7);
+    color: rgb(249 250 248 / 70%);
     line-height: var(--leading-relaxed);
     max-width: 280px;
     font-size: var(--text-sm);
@@ -64,7 +66,7 @@ footer .footer.block {
 
 .footer.block .footer-address {
     font-style: normal;
-    color: rgb(249 250 248 / 0.5);
+    color: rgb(249 250 248 / 50%);
     font-size: var(--text-sm);
     line-height: var(--leading-relaxed);
 }
@@ -140,7 +142,7 @@ footer .footer.block {
 
 .footer.block .footer-links a,
 .footer.block .footer-bottom-links a {
-    color: rgb(249 250 248 / 0.6);
+    color: rgb(249 250 248 / 60%);
     text-decoration: none;
     font-size: var(--text-sm);
     transition: color var(--transition-base);
@@ -157,15 +159,14 @@ footer .footer.block {
     max-width: calc(var(--content-width) + 2 * var(--content-padding));
     margin: var(--space-10) auto 0;
     display: flex;
-    flex-direction: column;
+    flex-flow: column wrap;
     align-items: flex-start;
-    flex-wrap: wrap;
     gap: var(--space-3);
     padding: 0 var(--content-padding);
 }
 
 .footer.block .footer-bottom p {
-    color: rgb(249 250 248 / 0.4);
+    color: rgb(249 250 248 / 40%);
     font-size: var(--text-xs);
     margin: 0;
 }

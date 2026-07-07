@@ -81,7 +81,9 @@ export function attemptLogin(phone, password) {
 
 /* ── Signup ── */
 
-export function attemptSignup({ name, phone, email, address, addressObj, password }) {
+export function attemptSignup({
+  name, phone, email, address, addressObj, password,
+}) {
   const normalized = normalizePhone(phone);
   const accounts = getAccounts();
 

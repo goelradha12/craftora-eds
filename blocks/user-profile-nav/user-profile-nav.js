@@ -23,6 +23,9 @@ import {
 } from '../../scripts/helpers.js';
 import { getOrdersForUser, money } from '../../scripts/cart-utils.js';
 
+const CHEVRON_ICON = '<svg class="user-profile-order-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
+const RECEIPT_ICON = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 3h16v18l-3-2-3 2-3-2-3 2-3-2-1 2Z"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/></svg>';
+
 function rowText(row) {
   return row ? row.textContent.trim() : '';
 }
@@ -53,6 +56,15 @@ function menuItemHTML(item) {
   }
   const activeClass = isActiveHref(item.href) ? ' user-profile-item--active' : '';
   return `<li><a class="user-profile-item${activeClass}" href="${esc(item.href)}">${inner}</a></li>`;
+}
+
+/* Action items (no href, e.g. "Sign Out") get a divider before them, matching
+   legacy's `.account-sidebar__divider` ahead of its Sign Out button. */
+function menuItemsHTML(items) {
+  return items.map((item, i) => {
+    const divider = !item.href && i > 0 ? '<li class="user-profile-divider" role="separator"></li>' : '';
+    return divider + menuItemHTML(item);
+  }).join('');
 }
 
 function personalInfoHTML(user, heading) {
@@ -90,40 +102,83 @@ function orderItemsHTML(items) {
   return `<ul class="user-profile-order-items">${items.map((item) => {
     const qty = item.qty ?? item.quantity ?? 1;
     const lineTotal = (item.price || 0) * qty;
+    const metaParts = [];
+    if (item.size) metaParts.push(`Size ${esc(item.size)}`);
+    if (item.color) {
+      metaParts.push(`<span class="user-profile-order-item-color"><span class="user-profile-order-item-color-dot" style="background:${esc(item.color)}"></span>${esc(item.colorName || '')}</span>`);
+    }
+    const isCustomized = !!(item.customized || item.designRequired);
     return `<li class="user-profile-order-item">
-      <span class="user-profile-order-item-name">${esc(item.name)} &times; ${esc(qty)}</span>
+      <img class="user-profile-order-item-img" src="${esc(item.image || '')}" alt="" width="48" height="48" loading="lazy">
+      <div class="user-profile-order-item-info">
+        <span class="user-profile-order-item-name">${esc(item.name)} &times; ${esc(qty)}</span>
+        ${metaParts.length ? `<span class="user-profile-order-item-meta">${metaParts.join(' &middot; ')}</span>` : ''}
+        <span class="user-profile-order-item-tags">
+          <span class="user-profile-order-tag${isCustomized ? ' user-profile-order-tag--custom' : ''}">${isCustomized ? 'Customized' : 'Plain'}</span>
+          ${item.designFee ? `<span class="user-profile-order-tag">+${money(item.designFee)} design</span>` : ''}
+        </span>
+      </div>
       <span class="user-profile-order-item-price">${money(lineTotal)}</span>
     </li>`;
   }).join('')}</ul>`;
 }
 
-function orderCardHTML(order) {
+function orderCardHTML(order, isFirst) {
   const isV2 = order.version === 2 || !!order.customer;
   const total = order.summary?.total ?? order.total ?? 0;
+  const subtotal = order.summary?.subtotal ?? total;
+  const designFees = order.summary?.designFees ?? 0;
   const payment = order.payment?.label || order.payment?.method || 'Not available';
+  const customer = isV2
+    ? order.customer
+    : { name: order.delivery?.name, phone: order.delivery?.phone, email: order.delivery?.email };
   const shippingAddress = isV2 ? order.shipping : order.delivery?.address;
   const addressHTML = shippingAddress ? formatAddress(shippingAddress) : '';
 
-  return `<li class="user-profile-order-card">
-    <div class="user-profile-order-header">
+  return `<details class="user-profile-order-card"${isFirst ? ' open' : ''}>
+    <summary class="user-profile-order-summary">
       <span class="user-profile-order-id">${esc(order.id)}</span>
       <span class="user-profile-order-date">${esc(formatDate(order.date))}</span>
       <span class="user-profile-order-status">${esc(order.status || 'Confirmed')}</span>
+      <span class="user-profile-order-summary-total">${money(total)}</span>
+      ${CHEVRON_ICON}
+    </summary>
+    <div class="user-profile-order-body">
+      <div class="user-profile-order-details-grid">
+        <div class="user-profile-order-detail-card">
+          <h3>Customer</h3>
+          <p>${displayValue(customer?.name)}</p>
+          <p>${displayValue(customer?.phone)}</p>
+          <p>${displayValue(customer?.email)}</p>
+        </div>
+        <div class="user-profile-order-detail-card">
+          <h3>Delivery Address</h3>
+          ${addressHTML || '<p class="value-empty">Not provided</p>'}
+        </div>
+        <div class="user-profile-order-detail-card">
+          <h3>Order Summary</h3>
+          <div class="user-profile-order-summary-row"><span>Subtotal</span><span>${money(subtotal)}</span></div>
+          ${designFees ? `<div class="user-profile-order-summary-row user-profile-order-summary-row-muted"><span>Design fees</span><span>${money(designFees)}</span></div>` : ''}
+          <div class="user-profile-order-summary-row"><span>Shipping</span><span>Free</span></div>
+          <div class="user-profile-order-summary-row user-profile-order-summary-row-total"><span>Total</span><span>${money(total)}</span></div>
+          <p class="user-profile-order-payment">${esc(payment)}</p>
+        </div>
+      </div>
+      <div class="user-profile-order-items-section">
+        <h3>Products</h3>
+        ${orderItemsHTML(order.items)}
+      </div>
     </div>
-    ${orderItemsHTML(order.items)}
-    <div class="user-profile-order-footer">
-      <span class="user-profile-order-payment">${esc(payment)}</span>
-      <span class="user-profile-order-total">${money(total)}</span>
-    </div>
-    ${addressHTML ? `<div class="user-profile-order-address">${addressHTML}</div>` : ''}
-  </li>`;
+  </details>`;
 }
 
 function ordersHTML(orders, heading) {
   const body = orders.length
-    ? `<ul class="user-profile-order-list">${orders.map(orderCardHTML).join('')}</ul>`
+    ? `<div class="user-profile-order-list">${orders.map((o, i) => orderCardHTML(o, i === 0)).join('')}</div>`
     : `<div class="user-profile-orders-empty">
-        <p>No orders yet.</p>
+        <span class="user-profile-orders-empty-icon">${RECEIPT_ICON}</span>
+        <p class="user-profile-orders-empty-title">No orders yet</p>
+        <p class="user-profile-orders-empty-desc">When you place an order, it'll show up here.</p>
         <a class="user-profile-btn primary" href="/products">Start Shopping</a>
       </div>`;
 
@@ -162,7 +217,7 @@ export default function decorate(block) {
             ${sub ? `<p class="user-profile-sub">${sub}</p>` : ''}
           </div>
         </div>
-        <ul class="user-profile-menu">${items.map(menuItemHTML).join('')}</ul>
+        <ul class="user-profile-menu">${menuItemsHTML(items)}</ul>
       </div>
     </aside>
     <div class="user-profile-main">

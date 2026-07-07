@@ -19,8 +19,8 @@
   --color-primary-light: #1f2937;
   --color-primary-dark: #030712;
   --color-accent-hover: #e85a00;
-  --color-accent-subtle: rgb(255 102 9 / 0.07);
-  --color-accent-ring: rgb(255 102 9 / 0.10);
+  --color-accent-subtle: rgb(255 102 9 / 7%);
+  --color-accent-ring: rgb(255 102 9 / 10%);
   --color-secondary-subtle: #bedffe;
 
   /* ── Status Colors ── */
@@ -28,8 +28,8 @@
   --color-success-light: #dcfce7;
   --color-error: #dc2626;
   --color-error-hover: #b91c1c;
-  --color-error-bg: hsl(0 80% 97%);
-  --color-error-border: hsl(0 80% 88%);
+  --color-error-bg: hsl(0deg 80% 97%);
+  --color-error-border: hsl(0deg 80% 88%);
   --color-warning: #d97706;
   --color-warning-light: #fef3c7;
   --color-wish: #e11d48;
@@ -37,7 +37,7 @@
   --color-wish-hover: #fecdd3;
 
   /* ── Surfaces ── */
-  --color-surface: #ffffff;
+  --color-surface: #fff;
   --color-surface-warm: #faf9f7;
   --color-surface-alt: #f3f4f6;
 
@@ -46,17 +46,17 @@
   --color-text-body: #374151;
   --color-text-muted: #6b7280;
   --color-text-light: #9ca3af;
-  --color-text-on-dark: #ffffff;
-  --color-text-on-accent: #ffffff;
+  --color-text-on-dark: #fff;
+  --color-text-on-accent: #fff;
 
   /* ── Borders ── */
   --color-border: #e5e7eb;
   --color-border-warm: #e8e3dc;
   --color-border-light: #f3f4f6;
-  --color-border-focus: rgb(17 24 39 / 0.40);
+  --color-border-focus: rgb(17 24 39 / 40%);
 
   /* ── Typography — Families ── */
-  --font-display: 'Fraunces', Georgia, serif;
+  --font-display: 'Fraunces', georgia, serif;
   --font-heading: 'Inter', -apple-system, sans-serif;
   --font-body: 'Lato', sans-serif;
   --font-ui: 'Inter', -apple-system, sans-serif;
@@ -109,14 +109,14 @@
   --radius-full: 9999px;
 
   /* ── Shadows ── */
-  --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.04);
-  --shadow-sm: 0 2px 8px rgb(0 0 0 / 0.06);
-  --shadow-md: 0 4px 16px rgb(0 0 0 / 0.08);
-  --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.10);
-  --shadow-xl: 0 20px 48px rgb(0 0 0 / 0.12);
-  --shadow-card: 0 2px 4px rgb(0 0 0 / 0.03), 0 8px 24px rgb(0 0 0 / 0.06);
-  --shadow-accent: 0 4px 12px rgb(255 102 9 / 0.25);
-  --shadow-focus: 0 0 0 3px rgb(255 102 9 / 0.12);
+  --shadow-xs: 0 1px 2px rgb(0 0 0 / 4%);
+  --shadow-sm: 0 2px 8px rgb(0 0 0 / 6%);
+  --shadow-md: 0 4px 16px rgb(0 0 0 / 8%);
+  --shadow-lg: 0 12px 32px rgb(0 0 0 / 10%);
+  --shadow-xl: 0 20px 48px rgb(0 0 0 / 12%);
+  --shadow-card: 0 2px 4px rgb(0 0 0 / 3%), 0 8px 24px rgb(0 0 0 / 6%);
+  --shadow-accent: 0 4px 12px rgb(255 102 9 / 25%);
+  --shadow-focus: 0 0 0 3px rgb(255 102 9 / 12%);
 
   /* ── Transitions ── */
   --transition-fast: 0.15s ease;
@@ -150,19 +150,19 @@
 
 /* ── Font fallbacks for CLS prevention ── */
 @font-face {
-  font-family: 'Inter-fallback';
+  font-family: Inter-fallback;
   size-adjust: 107%;
   src: local('Arial');
 }
 
 @font-face {
-  font-family: 'Lato-fallback';
+  font-family: Lato-fallback;
   size-adjust: 97.5%;
   src: local('Arial');
 }
 
 @font-face {
-  font-family: 'Fraunces-fallback';
+  font-family: Fraunces-fallback;
   size-adjust: 105%;
   src: local('Georgia');
 }
@@ -182,7 +182,7 @@ body {
   margin: 0;
   background-color: var(--color-background);
   color: var(--color-text-body);
-  font-family: var(--font-body), 'Lato-fallback', sans-serif;
+  font-family: var(--font-body), Lato-fallback, sans-serif;
   font-size: var(--text-base);
   font-weight: var(--weight-normal);
   line-height: var(--leading-relaxed);
@@ -217,7 +217,7 @@ h5,
 h6 {
   margin-top: 0;
   margin-bottom: var(--space-3);
-  font-family: var(--font-display), 'Fraunces-fallback', Georgia, serif;
+  font-family: var(--font-display), Fraunces-fallback, Georgia, serif;
   font-weight: var(--weight-normal);
   color: var(--color-text);
   line-height: var(--leading-tight);
@@ -228,8 +228,9 @@ h6 {
 h1 { font-size: var(--text-3xl); }
 h2 { font-size: var(--text-2xl); line-height: var(--leading-snug); }
 h3 { font-size: var(--text-lg); line-height: var(--leading-snug); }
+
 h4 {
-  font-family: var(--font-heading), 'Inter-fallback', sans-serif;
+  font-family: var(--font-heading), Inter-fallback, sans-serif;
   font-size: var(--text-base);
   font-weight: var(--weight-bold);
   line-height: var(--leading-snug);
@@ -306,7 +307,7 @@ button.button {
   border: 1.5px solid transparent;
   border-radius: var(--radius-md);
   padding: 0.75rem var(--space-6);
-  font-family: var(--font-ui), 'Inter-fallback', sans-serif;
+  font-family: var(--font-ui), Inter-fallback, sans-serif;
   font-size: var(--text-base);
   font-weight: var(--weight-bold);
   line-height: var(--leading-snug);
@@ -422,7 +423,7 @@ select {
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-lg);
   background: var(--color-background);
-  font-family: var(--font-body), 'Lato-fallback', sans-serif;
+  font-family: var(--font-body), Lato-fallback, sans-serif;
   font-size: var(--text-base);
   color: var(--color-text);
   outline: none;
@@ -519,7 +520,7 @@ main .section.dark h4 {
 }
 
 main .section.dark p {
-  color: rgb(249 250 248 / 0.7);
+  color: rgb(249 250 248 / 70%);
 }
 
 main .section.accent-bg {

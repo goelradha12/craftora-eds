@@ -350,9 +350,11 @@
   font-family: var(--font-heading);
   font-weight: var(--weight-bold);
   text-decoration: none;
-  transition: background var(--transition-base);
+  transition: all var(--transition-smooth);
 }
 
 .product-list-browse-btn:hover {
   background: var(--color-accent-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-accent);
 }

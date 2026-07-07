@@ -955,6 +955,7 @@
 /* The `hidden` attribute must win over the display rules above
    (a class selector otherwise outranks [hidden]). */
 .pd-cust-card[hidden],
-.pd-view-design-btn[hidden] {
+.pd-view-design-btn[hidden],
+.pd-cust-preview-wrap img[hidden] {
   display: none;
 }

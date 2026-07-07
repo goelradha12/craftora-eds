@@ -31,7 +31,9 @@ export function formatDate(value) {
  */
 export function formatAddress(addressObj) {
   if (!addressObj) return '';
-  const { house, street, landmark, city, state, pincode } = addressObj;
+  const {
+    house, street, landmark, city, state, pincode,
+  } = addressObj;
 
   const lines = [];
   if (house) lines.push(esc(house));
@@ -53,7 +55,9 @@ export function formatAddress(addressObj) {
  */
 export function formatAddressInline(addressObj) {
   if (!addressObj) return '';
-  const { house, street, city, state, pincode } = addressObj;
+  const {
+    house, street, city, state, pincode,
+  } = addressObj;
   const parts = [house, street, city, state].filter(Boolean);
   const line = parts.join(', ');
   return pincode ? `${line} - ${pincode}` : line;

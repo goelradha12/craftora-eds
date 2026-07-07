@@ -37,7 +37,7 @@
   padding: var(--space-20) var(--space-12) var(--space-20) var(--content-padding);
 }
 
-@media (min-width: 900px) {
+@media (width >= 900px) {
   .hero-content {
     padding-left: 32px;
   }
@@ -95,6 +95,7 @@
 
 .hero-image {
   overflow: hidden;
+
   /* Image fills entire right half, touching viewport edge */
 }
 

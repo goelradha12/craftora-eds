@@ -145,6 +145,7 @@
 .carousel.products .carousel-card-product:hover {
   transform: translateY(-2px);
 }
+
 .carousel.products .carousel-card-badge {
   position: absolute;
   top: var(--space-3);
@@ -233,6 +234,7 @@
   width: 16px;
   height: 16px;
   display: block;
+
   /* Convert black → amber #d97706:
      invert → sepia → saturate → hue-rotate to match --color-warning */
   filter: invert(58%) sepia(72%) saturate(600%) hue-rotate(2deg) brightness(95%);

@@ -7,7 +7,7 @@
  * Row 2+: [Question (e.g., <p><strong>)] [Answer (e.g., <p>)]
  */
 
-const ICON_CHEVRON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
+const ICON_CHEVRON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
 
 export default function decorate(block) {
   const rows = [...block.children];
@@ -17,7 +17,7 @@ export default function decorate(block) {
   const headerRow = rows[0];
   const eyebrowText = headerRow.children[0]?.textContent?.trim() || '';
   const headingContent = headerRow.children[1];
-  
+
   // Extract QA Rows
   const qaRows = rows.slice(1);
 
@@ -27,16 +27,16 @@ export default function decorate(block) {
   // The original layout had an h2 and a p (sub).
   // The authored content gives us an h2 (or similar) from headingContent,
   // and the "Heading" label in eyebrowText.
-  
+
   // Since the user authored this as:
   // Col 1: Heading
-  // Col 2: <h2>Frequently Asked Questions</h2> 
+  // Col 2: <h2>Frequently Asked Questions</h2>
   // (We don't have a sub-heading from the authored content block, so we'll just style the h2)
-  
+
   if (headingContent) {
     const headerWrapper = document.createElement('div');
     headerWrapper.className = 'faqs-header';
-    
+
     // We clone the authored heading content
     headerWrapper.append(...headingContent.cloneNode(true).childNodes);
     block.append(headerWrapper);
@@ -58,20 +58,20 @@ export default function decorate(block) {
 
       const details = document.createElement('details');
       details.className = 'faq-details';
-      
+
       const summary = document.createElement('summary');
       summary.textContent = questionText;
-      
+
       // Inject chevron SVG
       const svgWrapper = document.createElement('div');
       svgWrapper.innerHTML = ICON_CHEVRON;
       summary.append(svgWrapper.firstElementChild);
-      
+
       const content = document.createElement('div');
       content.className = 'faq-content';
       // Append authored answer content
       content.append(...answerContent.cloneNode(true).childNodes);
-      
+
       details.append(summary, content);
       list.append(details);
     });

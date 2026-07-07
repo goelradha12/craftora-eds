@@ -1,5 +1,7 @@
 import { esc, getOrders } from '../../scripts/cart-utils.js';
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 /**
  * `thank-you` variant — order confirmation card.
  * Authored rows: [heading + message] · [detail labels] · [CTA] · [CTA].
@@ -58,28 +60,133 @@ function decorateThankYou(block) {
 }
 
 /**
+ * Builds the contact form markup + wires up its (client-side only — there's
+ * no backend endpoint) submit/validate/success-swap behavior. Matches
+ * legacy craftora/contact.html's simulated-submit UX.
+ * @param {string} heading
+ * @param {string} subheading
+ * @returns {HTMLElement}
+ */
+function buildContactForm(heading, subheading) {
+  const wrap = document.createElement('div');
+  wrap.className = 'columns-form-form';
+  wrap.innerHTML = `
+    <h2 class="columns-form-heading">${esc(heading)}</h2>
+    <p class="columns-form-subheading">${esc(subheading)}</p>
+    <div class="columns-form-error" role="alert" hidden></div>
+    <form class="columns-form-fields" novalidate>
+      <div class="columns-form-row">
+        <div class="columns-form-field">
+          <label for="cf-name" class="columns-form-label-required">Name</label>
+          <input type="text" id="cf-name" name="name" placeholder="Jane Doe" required>
+        </div>
+        <div class="columns-form-field">
+          <label for="cf-email" class="columns-form-label-required">Email</label>
+          <input type="email" id="cf-email" name="email" placeholder="jane@example.com" required>
+        </div>
+      </div>
+      <div class="columns-form-field">
+        <label for="cf-subject" class="columns-form-label-required">Subject</label>
+        <select id="cf-subject" name="subject" required>
+          <option value="">Select a subject</option>
+          <option value="General">General Inquiry</option>
+          <option value="Order">Order Status</option>
+          <option value="Bulk">Bulk/Corporate Order</option>
+        </select>
+      </div>
+      <div class="columns-form-field">
+        <label for="cf-message" class="columns-form-label-required">Message</label>
+        <textarea id="cf-message" name="message" placeholder="How can we help you?" rows="5" required></textarea>
+      </div>
+      <button type="submit" class="button accent columns-form-submit">
+        <span class="columns-form-submit-text">Send Message</span>
+      </button>
+    </form>
+    <div class="columns-form-success" hidden>
+      <div class="columns-form-success-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <h3>Message Sent!</h3>
+      <p>Thanks for reaching out. We'll get back to you within 24 hours.</p>
+      <a href="#" class="columns-form-again">Send another message</a>
+    </div>`;
+
+  const heading$ = wrap.querySelector('.columns-form-heading');
+  const subheading$ = wrap.querySelector('.columns-form-subheading');
+  const form = wrap.querySelector('.columns-form-fields');
+  const errorEl = wrap.querySelector('.columns-form-error');
+  const successEl = wrap.querySelector('.columns-form-success');
+  const submitBtn = wrap.querySelector('.columns-form-submit');
+  const submitText = submitBtn.querySelector('.columns-form-submit-text');
+
+  const showForm = (show) => {
+    form.hidden = !show;
+    heading$.hidden = !show;
+    subheading$.hidden = !show;
+    successEl.hidden = show;
+  };
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    errorEl.hidden = true;
+
+    const name = form.name.value.trim();
+    const email = form.email.value.trim();
+    const subject = form.subject.value;
+    const message = form.message.value.trim();
+
+    if (!name || !email || !subject || !message) {
+      errorEl.textContent = 'Please fill in all required fields.';
+      errorEl.hidden = false;
+      return;
+    }
+    if (!EMAIL_RE.test(email)) {
+      errorEl.textContent = 'Please enter a valid email address.';
+      errorEl.hidden = false;
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitText.textContent = 'Sending…';
+    setTimeout(() => {
+      submitBtn.disabled = false;
+      submitText.textContent = 'Send Message';
+      showForm(false);
+    }, 700);
+  });
+
+  wrap.querySelector('.columns-form-again').addEventListener('click', (e) => {
+    e.preventDefault();
+    form.reset();
+    errorEl.hidden = true;
+    showForm(true);
+  });
+
+  return wrap;
+}
+
+/**
  * `form-right` variant — contact page.
  * Authored rows:
- *   [Contact Information col, first contact-method col]
- *   [contact-method col] · ... (middle rows, one card each)
- *   [Send us a message col]   (last row — will hold the nested contact-form block)
+ *   [Contact Information col, Send us a message col]   (row 0 — two columns)
+ *   [contact-method col]                                (one row per card)
+ *   ...
  *
- * Left = intro content + stacked contact-method cards.
- * Right = the form intro column, preserved as authored (a future contact-form
- * block nested in that cell renders itself independently).
+ * Left = intro content (row 0, col 0) + stacked contact-method cards (every
+ * row after row 0, each a single-column card).
+ * Right = a fully rendered contact form seeded from row 0, col 1's
+ * heading/paragraph (client-side only — no backend endpoint exists —
+ * matches legacy's simulated-submit UX).
  */
 function decorateFormRight(block) {
   const rows = [...block.children];
-  if (rows.length < 2) return;
+  if (rows.length < 1) return;
 
   const firstRow = rows[0];
-  const lastRow = rows[rows.length - 1];
-  const middleRows = rows.slice(1, -1);
+  const cardRows = rows.slice(1);
 
-  const firstRowCols = [...firstRow.children];
-  const content = firstRowCols.shift();
-  const cardCols = [...firstRowCols, ...middleRows.flatMap((row) => [...row.children])];
-  const formIntroCols = [...lastRow.children];
+  const [content, formIntroCol] = [...firstRow.children];
+  const cardCols = cardRows.flatMap((row) => [...row.children]);
 
   const grid = document.createElement('div');
   grid.className = 'columns-form-right-grid';
@@ -99,12 +206,13 @@ function decorateFormRight(block) {
   });
   left.append(cardsWrap);
 
+  const heading = formIntroCol?.querySelector('h1, h2, h3')?.textContent?.trim() || 'Send us a message';
+  const subheading = formIntroCol?.querySelector('p')?.textContent?.trim()
+    || "We'll get back to you as soon as possible.";
+
   const right = document.createElement('div');
   right.className = 'columns-form-right-col';
-  formIntroCols.forEach((col) => {
-    col.classList.add('columns-form-content');
-    right.append(col);
-  });
+  right.append(buildContactForm(heading, subheading));
 
   grid.append(left, right);
   block.replaceChildren(grid);

@@ -26,7 +26,7 @@
   padding: 0 var(--content-padding);
 }
 
-@media (min-width: 900px) {
+@media (width >= 900px) {
   .hero-pages-container:has(.hero-pages.cta) .hero-pages-wrapper {
     padding: 0 32px;
   }

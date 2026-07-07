@@ -33,8 +33,7 @@ export default function decorate(block) {
   let emptyCTAText = 'Continue Shopping';
   emptyParas.forEach((p) => {
     const a = p.querySelector('a');
-    if (a) { emptyCTAHref = a.getAttribute('href') || '/products'; emptyCTAText = a.textContent.trim(); }
-    else if (p.textContent.trim()) emptyDesc = p.textContent.trim();
+    if (a) { emptyCTAHref = a.getAttribute('href') || '/products'; emptyCTAText = a.textContent.trim(); } else if (p.textContent.trim()) emptyDesc = p.textContent.trim();
   });
 
   // Row 1: summary title
@@ -72,7 +71,7 @@ export default function decorate(block) {
         <div class="cart-empty">
           <h2>${esc(emptyHeading)}</h2>
           <p>${esc(emptyDesc)}</p>
-          <a href="${esc(emptyCTAHref)}">${esc(emptyCTAText)}</a>
+          <a class="cart-empty-cta" href="${esc(emptyCTAHref)}">${esc(emptyCTAText)}</a>
         </div>`;
       renderSummary(0, 0);
       return;

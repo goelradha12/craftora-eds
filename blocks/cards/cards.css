@@ -37,7 +37,7 @@
 }
 
 /* Default hover — only on base cards and image-content category cards */
-.cards:not(.icon-content):not(.round) > ul > li:not(:first-child):hover {
+.cards:not(.icon-content, .round) > ul > li:not(:first-child):hover {
   transform: translateY(-2px);
 }
 
@@ -211,6 +211,7 @@
 .cards.image-content > ul > li:first-child:hover {
   transform: none;
 }
+
 .cards.image-content > ul > li:first-child .cards-card-body:first-child {
   /* Hide the "Heading" label cell */
   display: none;
