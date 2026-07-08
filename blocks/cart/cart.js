@@ -19,6 +19,8 @@ import {
   setCheckoutSession, money, esc,
 } from '../../scripts/cart-utils.js';
 import { showCartDesignPreview } from '../../scripts/design-preview.js';
+import { getUser } from '../../scripts/auth.js';
+import showToast from '../../scripts/toast.js';
 
 export default function decorate(block) {
   const rows = [...block.children];
@@ -125,18 +127,28 @@ export default function decorate(block) {
   function renderSummary(totalItems, subtotal) {
     const hasItems = totalItems > 0;
     summary.innerHTML = `
-      <h2 class="cart-summary-title">${esc(summaryTitle)}</h2>
-      <div class="cart-summary-row"><span>Items (${totalItems})</span><span>${money(subtotal)}</span></div>
-      <div class="cart-summary-row"><span>Shipping</span><span>Free</span></div>
-      <div class="cart-summary-row cart-summary-row-muted"><span>Discounts</span><span>${money(0)}</span></div>
-      <div class="cart-summary-divider"></div>
-      <div class="cart-summary-row cart-summary-total"><span>Total</span><span>${money(subtotal)}</span></div>
-      <button class="cart-checkout-btn" type="button" ${hasItems ? '' : 'disabled'}>${esc(checkoutLabel)}</button>
-      <p class="cart-checkout-note">${hasItems ? 'Secure checkout with free shipping.' : esc(checkoutNote)}</p>`;
+    <h2 class="cart-summary-title">${esc(summaryTitle)}</h2>
+    <div class="cart-summary-row"><span>Items (${totalItems})</span><span>${money(subtotal)}</span></div>
+    <div class="cart-summary-row"><span>Shipping</span><span>Free</span></div>
+    <div class="cart-summary-row cart-summary-row-muted"><span>Discounts</span><span>${money(0)}</span></div>
+    <div class="cart-summary-divider"></div>
+    <div class="cart-summary-row cart-summary-total"><span>Total</span><span>${money(subtotal)}</span></div>
+    <button class="cart-checkout-btn" type="button" ${hasItems ? '' : 'disabled'}>${esc(checkoutLabel)}</button>
+    <p class="cart-checkout-note">${hasItems ? 'Secure checkout with free shipping.' : esc(checkoutNote)}</p>`;
 
     summary.querySelector('.cart-checkout-btn')?.addEventListener('click', () => {
       const cart = getCart();
       if (!cart.length) return;
+
+      const user = getUser();
+      if (!user || !user.phone) {
+        showToast('Please log in to continue with your purchase.', 'warning');
+        setTimeout(() => {
+          window.location.href = `/login?redirect=${encodeURIComponent('/checkout')}`;
+        }, 1000);
+        return;
+      }
+
       setCheckoutSession('cart', cart);
       window.location.href = '/checkout';
     });

@@ -341,7 +341,7 @@
   margin: 0 0 var(--space-6);
 }
 
-.product-list-browse-btn {
+.product-list .product-list-browse-btn {
   display: inline-block;
   padding: var(--space-3) var(--space-8);
   background: var(--color-accent);
@@ -353,7 +353,7 @@
   transition: all var(--transition-smooth);
 }
 
-.product-list-browse-btn:hover {
+.product-list .product-list-browse-btn:hover {
   background: var(--color-accent-hover);
   transform: translateY(-2px);
   box-shadow: var(--shadow-accent);

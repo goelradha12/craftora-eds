@@ -447,7 +447,7 @@ function handleAddToCart(block, redirect) {
   };
 
   if (redirect) {
-    // Buy Now requires a logged-in user (matches legacy).
+    // Buy Now requires a logged-in user.
     const user = getUser();
     if (!user || !user.phone) {
       // eslint-disable-next-line no-alert

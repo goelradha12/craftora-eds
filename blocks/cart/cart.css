@@ -44,7 +44,7 @@ h1 {
   margin: 0 0 var(--space-2);
 }
 
-.cart-empty-cta {
+.cart .cart-empty-cta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -59,7 +59,7 @@ h1 {
   transition: all var(--transition-smooth);
 }
 
-.cart-empty-cta:hover {
+.cart .cart-empty-cta:hover {
   background: var(--color-accent-hover);
   transform: translateY(-2px);
   box-shadow: var(--shadow-accent);
