@@ -1,30 +1,30 @@
 /**
  * Hero Block — Craftora EDS
- * Two-column hero: text (heading, description, CTA) + image.
+ * Merges the former `hero` (full-bleed image hero) and `hero-pages`
+ * (inner-page banner / CTA card) blocks into one, split by variant:
  *
- * Authored as a table:
- * | Hero |
- * | --- |
- * | [heading] | [image] |
- * | [description] | |
- * | [cta link] | |
+ * - Image variant (row 0 has an image in col 2): two-column hero with
+ *   text + full-bleed image. Authored as:
+ *     | Hero |
+ *     | --- |
+ *     | [heading] | [image] |
+ *     | [description] | |
+ *     | [cta link] | |
+ *
+ * - No-image variant (default `hero-pages` behaviour): inner-page banner,
+ *   or `.cta` for the centered call-to-action card variant. Authored as:
+ *     | Hero |
+ *     | --- |
+ *     | [heading] |
+ *     | [description] |
  */
-export default function decorate(block) {
-  const rows = [...block.children];
-  if (!rows.length) return;
 
-  // Row 0: heading (col1) + image (col2)
-  const row0 = rows[0];
-  const cols = [...row0.children];
-  const imageCol = cols[1];
-
-  // Build structure
-  block.textContent = '';
+function decorateImageHero(block, rows, imageCol) {
+  block.classList.add('has-image');
 
   const wrapper = document.createElement('div');
   wrapper.className = 'hero-inner';
 
-  // Text content
   const content = document.createElement('div');
   content.className = 'hero-content';
 
@@ -54,19 +54,50 @@ export default function decorate(block) {
 
   wrapper.append(content);
 
-  // Image
-  if (imageCol) {
-    const imageDiv = document.createElement('div');
-    imageDiv.className = 'hero-image';
-    const img = imageCol.querySelector('img') || imageCol.querySelector('picture');
-    if (img) imageDiv.append(img);
-    wrapper.append(imageDiv);
-  }
+  const imageDiv = document.createElement('div');
+  imageDiv.className = 'hero-image';
+  const img = imageCol.querySelector('img') || imageCol.querySelector('picture');
+  if (img) imageDiv.append(img);
+  wrapper.append(imageDiv);
 
   block.append(wrapper);
 
   const section = block.closest('.section');
   if (section) {
     section.classList.remove('section');
+  }
+}
+
+function decoratePagesHero(block, rows) {
+  block.classList.add('no-image');
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'hero-banner-content';
+
+  rows.forEach((row) => {
+    const cell = row.children[0];
+    if (cell) {
+      while (cell.firstChild) wrapper.append(cell.firstChild);
+    }
+  });
+
+  block.append(wrapper);
+}
+
+export default function decorate(block) {
+  const rows = [...block.children];
+  if (!rows.length) return;
+
+  const row0 = rows[0];
+  const cols = [...row0.children];
+  const imageCol = cols[1];
+  const hasImage = imageCol && (imageCol.querySelector('img') || imageCol.querySelector('picture'));
+
+  block.textContent = '';
+
+  if (hasImage) {
+    decorateImageHero(block, rows, imageCol);
+  } else {
+    decoratePagesHero(block, rows);
   }
 }

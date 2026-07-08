@@ -1,15 +1,17 @@
 /* ============================================================
    Hero Block — Craftora EDS
-   Full-bleed hero: text aligned to content grid, image edge-to-edge.
+   Merged block: image variant (full-bleed hero) + no-image variant
+   (inner-page banner / CTA card, formerly the `hero-pages` block).
    ============================================================ */
 
-/* Override EDS section constraints — hero is full-bleed */
-.hero-container {
+/* ── Image variant: full-bleed hero, text aligned to content grid ── */
+
+.hero-container:has(.hero.has-image) {
   padding: 0 !important;
   margin: 0 !important;
 }
 
-.hero-container > .hero-wrapper {
+.hero-container:has(.hero.has-image) > .hero-wrapper {
   max-width: none;
   padding: 0;
 }
@@ -131,4 +133,136 @@
     font-size: var(--text-3xl);
     max-width: none;
   }
+}
+
+/* ── No-image variant: inner-page banner with blue tinted background
+   (formerly the `hero-pages` block). Matches legacy .hero-content
+   from style.css ── */
+
+.hero-container:has(.hero.no-image) {
+  background-color: var(--color-secondary-subtle);
+  background-image: url('/assets/backgrounds/bg.svg');
+  background-size: contain;
+  background-position: bottom right;
+  background-repeat: no-repeat;
+  padding: 0 !important;
+  margin: 0;
+}
+
+/* CTA variant: section has no blue bg — the card itself is blue */
+.hero-container:has(.hero.no-image.cta) {
+  background-color: transparent;
+  background-image: none;
+  padding: var(--space-20) 0 !important;
+}
+
+.hero-container:has(.hero.no-image.cta) > .hero-wrapper {
+  max-width: var(--content-width);
+  padding: 0 var(--content-padding);
+}
+
+@media (width >= 900px) {
+  .hero-container:has(.hero.no-image.cta) > .hero-wrapper {
+    padding: 0 32px;
+  }
+}
+
+.hero-container:has(.hero.no-image) > .hero-wrapper {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 0 var(--content-padding);
+}
+
+.hero-banner-content {
+  padding: var(--space-20) 0;
+}
+
+.hero.no-image h1,
+.hero.no-image h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-normal);
+  line-height: var(--leading-tight);
+  color: var(--color-text);
+  margin-bottom: var(--space-4);
+  letter-spacing: -0.01em;
+}
+
+.hero.no-image p {
+  max-width: 48ch;
+  color: var(--color-text-body);
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  line-height: var(--leading-relaxed);
+  margin: 0;
+}
+
+@media (width < 768px) {
+  .hero-banner-content {
+    padding: var(--space-12) 0;
+  }
+
+  .hero.no-image h1,
+  .hero.no-image h2 {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-3);
+  }
+
+  .hero.no-image p {
+    font-size: var(--text-base);
+  }
+}
+
+/* ── CTA Variant ──
+   Centered call-to-action card with blue background + accent button.
+   Matches legacy .cta-section from home.css
+*/
+.hero.no-image.cta .hero-banner-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-6);
+  background-color: var(--color-secondary-subtle);
+  background-image: url('/assets/backgrounds/bg.svg');
+  background-size: 40%;
+  background-position: bottom right;
+  background-repeat: no-repeat;
+  padding: var(--space-20) var(--space-8);
+  border-radius: var(--radius-2xl);
+}
+
+.hero.no-image.cta h2 {
+  font-family: var(--font-display);
+  font-weight: var(--weight-normal);
+  font-size: var(--text-3xl);
+  margin: 0;
+  max-width: 16ch;
+}
+
+.hero.no-image.cta p {
+  max-width: 44ch;
+  margin: 0;
+  text-align: center;
+}
+
+.hero.no-image.cta a {
+  display: inline-block;
+  width: fit-content;
+  padding: var(--space-4) var(--space-10);
+  border-radius: var(--radius-sm);
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  font-family: var(--font-heading);
+  text-decoration: none;
+  transition: all var(--transition-smooth);
+}
+
+.hero.no-image.cta a:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-accent);
+  color: var(--color-text-on-accent);
+  text-decoration: none;
 }

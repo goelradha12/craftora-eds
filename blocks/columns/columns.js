@@ -218,6 +218,62 @@ function decorateFormRight(block) {
   block.replaceChildren(grid);
 }
 
+const ICON_CHEVRON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+
+/**
+ * `faqs` variant — accordion of Frequently Asked Questions using native
+ * <details> elements.
+ * Authored rows: [Label: "Heading"] [Actual Heading] · then one row per
+ * question, [Question] | [Answer].
+ */
+function decorateFaqs(block) {
+  const rows = [...block.children];
+  if (!rows.length) return;
+
+  const headerRow = rows[0];
+  const headingContent = headerRow.children[1];
+  const qaRows = rows.slice(1);
+
+  block.textContent = '';
+
+  if (headingContent) {
+    const headerWrapper = document.createElement('div');
+    headerWrapper.className = 'columns-faqs-header';
+    headerWrapper.append(...headingContent.cloneNode(true).childNodes);
+    block.append(headerWrapper);
+  }
+
+  if (qaRows.length > 0) {
+    const list = document.createElement('div');
+    list.className = 'columns-faq-accordion';
+
+    qaRows.forEach((row) => {
+      const qCell = row.children[0];
+      const aCell = row.children[1];
+      if (!qCell || !aCell) return;
+
+      const details = document.createElement('details');
+      details.className = 'columns-faq-details';
+
+      const summary = document.createElement('summary');
+      summary.textContent = qCell.textContent.trim();
+
+      const svgWrapper = document.createElement('div');
+      svgWrapper.innerHTML = ICON_CHEVRON;
+      summary.append(svgWrapper.firstElementChild);
+
+      const content = document.createElement('div');
+      content.className = 'columns-faq-content';
+      content.append(...aCell.cloneNode(true).childNodes);
+
+      details.append(summary, content);
+      list.append(details);
+    });
+
+    block.append(list);
+  }
+}
+
 /**
  * Extracts a search query from a Google Maps URL.
  * Handles formats like:
@@ -248,6 +304,11 @@ export default function decorate(block) {
 
   if (block.classList.contains('form-right')) {
     decorateFormRight(block);
+    return;
+  }
+
+  if (block.classList.contains('faqs')) {
+    decorateFaqs(block);
     return;
   }
 
