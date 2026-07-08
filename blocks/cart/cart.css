@@ -5,6 +5,16 @@
   color: var(--color-text-body);
 }
 
+h1 {
+  font-size: var(--text-xl);
+}
+
+@media (width >= 600px) {
+  h1 {
+    font-size: var(--text-3xl);
+  }
+}
+
 .cart-layout {
   display: grid;
   grid-template-columns: 1fr;
@@ -373,6 +383,17 @@
   }
 }
 
+/* ── Tablet/narrow: matches legacy's <=768px step-down ── */
+@media (width < 900px) {
+  .cart-item-name {
+    font-size: 0.95rem;
+  }
+
+  .cart-item-price {
+    font-size: var(--text-base);
+  }
+}
+
 /* ── Small mobile: image pinned left, content in a grid column, actions
    span full width below with a divider, remove button floats top-right ── */
 @media (width < 600px) {
@@ -395,9 +416,17 @@
     gap: 0.35rem;
   }
 
+  .cart-item-name {
+    font-size: 1.08rem;
+  }
+
   .cart-item-price {
     font-size: var(--text-sm);
     font-weight: var(--weight-medium);
+  }
+
+  .cart-item-meta span {
+    font-size: 0.78rem;
   }
 
   .cart-item-actions {
@@ -418,5 +447,9 @@
     right: 0;
     background: none;
     border-color: transparent;
+  }
+
+  .cart-checkout-note {
+    font-size: 0.82rem;
   }
 }

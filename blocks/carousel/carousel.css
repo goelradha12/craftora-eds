@@ -14,7 +14,6 @@
 .carousel-heading h2 {
   font-family: var(--font-display);
   font-weight: var(--weight-normal);
-  font-size: var(--text-2xl);
   margin: 0;
 }
 

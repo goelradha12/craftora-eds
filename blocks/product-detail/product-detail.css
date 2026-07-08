@@ -950,6 +950,11 @@
     grid-template-columns: 1fr;
     gap: var(--space-1);
   }
+
+  .pd-cust-edit-link {
+    margin-left: 0; 
+    align-self: flex-start;
+  }
 }
 
 /* The `hidden` attribute must win over the display rules above

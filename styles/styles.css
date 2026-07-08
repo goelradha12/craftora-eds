@@ -72,6 +72,11 @@
   --text-3xl: clamp(2rem, 4vw, 2.75rem);
   --text-4xl: clamp(2.5rem, 5vw, 3.5rem);
 
+  /* ── Typography — Nav sizes (matches legacy's dedicated nav scale) ── */
+  --text-nav: 0.95rem;
+  --text-nav-sm: 0.875rem;
+  --text-nav-xs: 0.625rem;
+
   /* ── Typography — Weights ── */
   --weight-normal: 400;
   --weight-medium: 500;
@@ -225,9 +230,11 @@ h6 {
   overflow-wrap: break-word;
 }
 
-h1 { font-size: var(--text-3xl); }
-h2 { font-size: var(--text-2xl); line-height: var(--leading-snug); }
-h3 { font-size: var(--text-lg); line-height: var(--leading-snug); }
+/* Mobile-first: one step down from desktop (matches legacy's <=768px
+   heading override) — bumped back up at the 900px breakpoint below. */
+h1 { font-size: var(--text-2xl); }
+h2 { font-size: var(--text-xl); line-height: var(--leading-snug); }
+h3 { font-size: var(--text-md); line-height: var(--leading-snug); }
 
 h4 {
   font-family: var(--font-heading), Inter-fallback, sans-serif;
@@ -476,6 +483,16 @@ main img {
    SECTIONS & LAYOUT
    ============================================================ */
 
+/* Phone: tighten the shared edge padding — 24px per side eats too much
+   width on narrow screens. Redefining the token (rather than overriding
+   every consumer) keeps every container that reads --content-padding
+   (section wrapper, header, footer, hero-pages) in sync automatically. */
+@media (width < 600px) {
+  :root {
+    --content-padding: 16px;
+  }
+}
+
 main > div {
   margin: var(--space-8) var(--space-4);
 }
@@ -499,6 +516,10 @@ main > .section:first-of-type {
   main > .section > div {
     padding: 0 32px;
   }
+
+  h1 { font-size: var(--text-3xl); }
+  h2 { font-size: var(--text-2xl); }
+  h3 { font-size: var(--text-lg); }
 }
 
 /* ── Section metadata variants ── */

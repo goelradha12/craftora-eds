@@ -8,6 +8,15 @@
   align-items: start;
 }
 
+/* Mobile only: the page's first section has its top padding zeroed out
+   site-wide (styles.css), which leaves this block flush against the header
+   — add it back here instead of touching that shared rule. */
+@media (width < 900px) {
+  .user-profile-layout {
+    padding-top: var(--space-4);
+  }
+}
+
 @media (width >= 900px) {
   .user-profile-layout {
     grid-template-columns: 300px 1fr;
@@ -166,7 +175,13 @@
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
-  padding: var(--space-6);
+  padding: var(--space-4);
+}
+
+@media (width >= 900px) {
+  .user-profile-section {
+    padding: var(--space-6);
+  }
 }
 
 .user-profile-section-title {
